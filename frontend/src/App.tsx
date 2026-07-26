@@ -1,7 +1,7 @@
-import { AppRoutes } from './routes/AppRoutes'
+import { RutasAplicacion } from './routes/RutasAplicacion'
 
 function App() {
-  return <AppRoutes />
+  return <RutasAplicacion />
 }
 
 export default App

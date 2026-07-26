@@ -1,12 +1,12 @@
 import { InternalHero } from '../../components/common/InternalHero'
-import { TransparencyCategoryGrid } from '../../components/transparency/TransparencyCategoryGrid'
+import { CuadriculaCategoriasTransparencia } from '../../components/transparencia/CuadriculaCategoriasTransparencia'
 import {
-  commonObligationCategories,
-  commonObligationIntro,
-} from '../../data/transparencyData'
+  categoriasObligacionesComunes,
+  introduccionObligacionesComunes,
+} from '../../data/datosTransparencia'
 import { usePageTitle } from '../../hooks/usePageTitle'
 
-export function CommonObligationsPage() {
+export function PaginaObligacionesComunes() {
   usePageTitle('Obligaciones Comunes (LGTAIP)')
 
   return (
@@ -25,9 +25,11 @@ export function CommonObligationsPage() {
           <div className="transparency-intro">
             <p className="eyebrow">Articulo 15</p>
             <h2>Fracciones de obligaciones comunes</h2>
-            <p>{commonObligationIntro}</p>
+            <p>{introduccionObligacionesComunes}</p>
           </div>
-          <TransparencyCategoryGrid categories={commonObligationCategories} />
+          <CuadriculaCategoriasTransparencia
+            categorias={categoriasObligacionesComunes}
+          />
         </div>
       </section>
     </main>

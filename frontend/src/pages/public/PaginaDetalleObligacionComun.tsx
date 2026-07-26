@@ -1,16 +1,16 @@
 import { Link, useParams } from 'react-router-dom'
 import { InternalHero } from '../../components/common/InternalHero'
-import { TransparencyDocumentTable } from '../../components/transparency/TransparencyDocumentTable'
-import { getCommonObligationCategory } from '../../data/transparencyData'
+import { TablaDocumentosTransparencia } from '../../components/transparencia/TablaDocumentosTransparencia'
+import { obtenerCategoriaObligacionComun } from '../../data/datosTransparencia'
 import { usePageTitle } from '../../hooks/usePageTitle'
 
-export function CommonObligationDetailPage() {
+export function PaginaDetalleObligacionComun() {
   const { slug } = useParams()
-  const category = getCommonObligationCategory(slug)
+  const categoria = obtenerCategoriaObligacionComun(slug)
 
-  usePageTitle(category?.title ?? 'Categoria no encontrada')
+  usePageTitle(categoria?.titulo ?? 'Categoria no encontrada')
 
-  if (!category) {
+  if (!categoria) {
     return (
       <main className="internal-main">
         <InternalHero
@@ -34,7 +34,10 @@ export function CommonObligationDetailPage() {
                 Revisa la ruta o vuelve al explorador de obligaciones comunes
                 para seleccionar una fraccion disponible.
               </p>
-              <Link className="button button--primary" to="/transparencia/obligaciones-comunes">
+              <Link
+                className="button button--primary"
+                to="/transparencia/obligaciones-comunes"
+              >
                 Volver al explorador
               </Link>
             </div>
@@ -48,42 +51,47 @@ export function CommonObligationDetailPage() {
     <main className="internal-main">
       <InternalHero
         eyebrow="Transparencia"
-        title={category.title}
-        description={category.description}
+        title={categoria.titulo}
+        description={categoria.descripcion}
         breadcrumbs={[
           { label: 'Transparencia', to: '/transparencia' },
           {
             label: 'Obligaciones Comunes (LGTAIP)',
             to: '/transparencia/obligaciones-comunes',
           },
-          { label: category.title },
+          { label: categoria.titulo },
         ]}
       />
       <section className="section">
         <div className="container transparency-detail">
           <div className="content-card transparency-detail-card">
             <p className="eyebrow">Detalle de fraccion</p>
-            <h2 title={category.title}>{category.title}</h2>
-            <p>{category.description}</p>
-            {category.legalBasis ? (
+            <h2 title={categoria.titulo}>{categoria.titulo}</h2>
+            <p>{categoria.descripcion}</p>
+            {categoria.fundamentoLegal ? (
               <p className="legal-basis">
-                <strong>Fundamento legal:</strong> {category.legalBasis}
+                <strong>Fundamento legal:</strong> {categoria.fundamentoLegal}
               </p>
             ) : null}
           </div>
 
-          <section className="transparency-files" aria-labelledby="available-files-title">
+          <section
+            className="transparency-files"
+            aria-labelledby="titulo-archivos-disponibles"
+          >
             <div className="section-heading section-heading--split transparency-files-heading">
               <div>
                 <p className="eyebrow">Documentos</p>
-                <h2 id="available-files-title">Archivos disponibles</h2>
+                <h2 id="titulo-archivos-disponibles">
+                  Archivos disponibles
+                </h2>
                 <p>
                   Los archivos mostrados son provisionales y no sustituyen
                   documentos oficiales.
                 </p>
               </div>
             </div>
-            <TransparencyDocumentTable documents={category.documents} />
+            <TablaDocumentosTransparencia documentos={categoria.documentos} />
           </section>
         </div>
       </section>

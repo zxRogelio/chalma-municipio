@@ -3,8 +3,6 @@ import { PublicLayout } from '../layouts/PublicLayout'
 import { AdminDashboardPage } from '../pages/admin/AdminDashboardPage'
 import { AdminLoginPage } from '../pages/admin/AdminLoginPage'
 import { AboutPage } from '../pages/public/AboutPage'
-import { CommonObligationDetailPage } from '../pages/public/CommonObligationDetailPage'
-import { CommonObligationsPage } from '../pages/public/CommonObligationsPage'
 import { ContactPage } from '../pages/public/ContactPage'
 import { CouncilPage } from '../pages/public/CouncilPage'
 import { DepartmentsPage } from '../pages/public/DepartmentsPage'
@@ -13,12 +11,14 @@ import { GovernmentPage } from '../pages/public/GovernmentPage'
 import { HomePage } from '../pages/public/HomePage'
 import { NotFoundPage } from '../pages/public/NotFoundPage'
 import { OrganizationPage } from '../pages/public/OrganizationPage'
+import { PaginaDetalleObligacionComun } from '../pages/public/PaginaDetalleObligacionComun'
+import { PaginaDocumentosTransparencia } from '../pages/public/PaginaDocumentosTransparencia'
+import { PaginaObligacionesComunes } from '../pages/public/PaginaObligacionesComunes'
+import { PaginaTransparencia } from '../pages/public/PaginaTransparencia'
 import { ProceduresServicesPage } from '../pages/public/ProceduresServicesPage'
-import { TransparencyDocumentPage } from '../pages/public/TransparencyDocumentPage'
-import { TransparencyPage } from '../pages/public/TransparencyPage'
 import { transparencySections } from '../data/siteContent'
 
-export function AppRoutes() {
+export function RutasAplicacion() {
   return (
     <BrowserRouter>
       <Routes>
@@ -33,38 +33,38 @@ export function AppRoutes() {
           <Route path="/gobierno/cabildo" element={<CouncilPage />} />
           <Route path="/gobierno/directorio" element={<DirectoryPage />} />
           <Route path="/gobierno/dependencias" element={<DepartmentsPage />} />
-          <Route path="/transparencia" element={<TransparencyPage />} />
+          <Route path="/transparencia" element={<PaginaTransparencia />} />
           <Route
             path="/transparencia/obligaciones-comunes"
-            element={<CommonObligationsPage />}
+            element={<PaginaObligacionesComunes />}
           />
           <Route
             path="/transparencia/obligaciones-comunes/:slug"
-            element={<CommonObligationDetailPage />}
+            element={<PaginaDetalleObligacionComun />}
           />
           <Route
             path="/transparencia/obligaciones-especificas"
-            element={<TransparencyDocumentPage section={transparencySections.specific} />}
+            element={<PaginaDocumentosTransparencia section={transparencySections.specific} />}
           />
           <Route
             path="/transparencia/obras-publicas"
-            element={<TransparencyDocumentPage section={transparencySections.works} />}
+            element={<PaginaDocumentosTransparencia section={transparencySections.works} />}
           />
           <Route
             path="/transparencia/fondos-federales"
-            element={<TransparencyDocumentPage section={transparencySections.funds} />}
+            element={<PaginaDocumentosTransparencia section={transparencySections.funds} />}
           />
           <Route
             path="/transparencia/informacion-financiera"
-            element={<TransparencyDocumentPage section={transparencySections.finance} />}
+            element={<PaginaDocumentosTransparencia section={transparencySections.finance} />}
           />
           <Route
             path="/transparencia/cuenta-publica"
-            element={<TransparencyDocumentPage section={transparencySections.account} />}
+            element={<PaginaDocumentosTransparencia section={transparencySections.account} />}
           />
           <Route
             path="/transparencia/licitaciones"
-            element={<TransparencyDocumentPage section={transparencySections.bids} />}
+            element={<PaginaDocumentosTransparencia section={transparencySections.bids} />}
           />
           <Route
             path="/tramites-servicios"

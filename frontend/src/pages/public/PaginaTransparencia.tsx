@@ -3,9 +3,11 @@ import { InternalHero } from '../../components/common/InternalHero'
 import { transparencyNavigation } from '../../data/navigation'
 import { usePageTitle } from '../../hooks/usePageTitle'
 
-const internalTransparencyItems = transparencyNavigation.filter((item) => !item.external)
+const elementosTransparenciaInternos = transparencyNavigation.filter(
+  (elemento) => !elemento.external,
+)
 
-export function TransparencyPage() {
+export function PaginaTransparencia() {
   usePageTitle('Transparencia')
 
   return (
@@ -27,12 +29,15 @@ export function TransparencyPage() {
             </p>
           </div>
           <div className="department-grid">
-            {internalTransparencyItems.map((item) => (
-              <article key={item.to}>
-                <span className="department-icon department-icon--doc" aria-hidden="true" />
-                <h3>{item.label}</h3>
-                <p>{item.description}</p>
-                <Link to={item.to}>Consultar</Link>
+            {elementosTransparenciaInternos.map((elemento) => (
+              <article key={elemento.to}>
+                <span
+                  className="department-icon department-icon--doc"
+                  aria-hidden="true"
+                />
+                <h3>{elemento.label}</h3>
+                <p>{elemento.description}</p>
+                <Link to={elemento.to}>Consultar</Link>
               </article>
             ))}
           </div>

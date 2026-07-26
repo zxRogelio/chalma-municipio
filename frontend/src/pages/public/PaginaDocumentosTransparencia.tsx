@@ -4,15 +4,15 @@ import { projectCards } from '../../data/siteContent'
 import { usePageTitle } from '../../hooks/usePageTitle'
 import type { TransparencySection } from '../../types/site'
 
-interface TransparencyDocumentPageProps {
+interface PropiedadesPaginaDocumentosTransparencia {
   section: TransparencySection
 }
 
-export function TransparencyDocumentPage({
+export function PaginaDocumentosTransparencia({
   section,
-}: TransparencyDocumentPageProps) {
+}: PropiedadesPaginaDocumentosTransparencia) {
   usePageTitle(section.title)
-  const isWorksPage = section.route.endsWith('obras-publicas')
+  const esPaginaObras = section.route.endsWith('obras-publicas')
 
   return (
     <main className="internal-main">
@@ -43,17 +43,17 @@ export function TransparencyDocumentPage({
             </label>
           </div>
 
-          {isWorksPage ? (
+          {esPaginaObras ? (
             <div className="project-grid">
-              {projectCards.map((project) => (
-                <article key={project.title}>
+              {projectCards.map((proyecto) => (
+                <article key={proyecto.title}>
                   <div className="project-visual" aria-hidden="true">
-                    <span>{project.status}</span>
+                    <span>{proyecto.status}</span>
                   </div>
                   <div>
-                    <span>{project.status}</span>
-                    <h3>{project.title}</h3>
-                    <p>{project.description}</p>
+                    <span>{proyecto.status}</span>
+                    <h3>{proyecto.title}</h3>
+                    <p>{proyecto.description}</p>
                     <button type="button" disabled>
                       Ficha pendiente
                     </button>

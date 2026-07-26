@@ -1,15 +1,15 @@
-import type { TransparencyDocument } from '../../data/transparencyData'
-import { DocumentActions } from './DocumentActions'
-import { DocumentFileIcon } from './DocumentFileIcon'
+import type { DocumentoTransparencia } from '../../data/datosTransparencia'
+import { AccionesDocumento } from './AccionesDocumento'
+import { IconoArchivoDocumento } from './IconoArchivoDocumento'
 
-interface TransparencyDocumentTableProps {
-  documents: TransparencyDocument[]
+interface PropiedadesTablaDocumentosTransparencia {
+  documentos: DocumentoTransparencia[]
 }
 
-export function TransparencyDocumentTable({
-  documents,
-}: TransparencyDocumentTableProps) {
-  if (documents.length === 0) {
+export function TablaDocumentosTransparencia({
+  documentos,
+}: PropiedadesTablaDocumentosTransparencia) {
+  if (documentos.length === 0) {
     return (
       <div className="transparency-empty-state">
         <h3>No hay archivos disponibles</h3>
@@ -36,20 +36,20 @@ export function TransparencyDocumentTable({
           </tr>
         </thead>
         <tbody>
-          {documents.map((documentItem) => (
-            <tr key={documentItem.id}>
+          {documentos.map((documento) => (
+            <tr key={documento.id}>
               <td>
                 <div className="document-title-cell">
-                  <DocumentFileIcon fileType={documentItem.fileType} />
-                  <span title={documentItem.title}>{documentItem.title}</span>
+                  <IconoArchivoDocumento tipoArchivo={documento.tipoArchivo} />
+                  <span title={documento.titulo}>{documento.titulo}</span>
                 </div>
               </td>
-              <td>{documentItem.period.year}</td>
-              <td>{documentItem.period.label}</td>
-              <td>{documentItem.fileType}</td>
-              <td>{documentItem.size ?? 'Por definir'}</td>
+              <td>{documento.periodo.anio}</td>
+              <td>{documento.periodo.etiqueta}</td>
+              <td>{documento.tipoArchivo}</td>
+              <td>{documento.tamano ?? 'Por definir'}</td>
               <td>
-                <DocumentActions documentItem={documentItem} />
+                <AccionesDocumento documento={documento} />
               </td>
             </tr>
           ))}
