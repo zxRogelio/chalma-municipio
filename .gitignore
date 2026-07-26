@@ -6,10 +6,12 @@ frontend/node_modules/
 frontend/dist/
 frontend/.env
 frontend/.env.*
+!frontend/.env.example
 
 backend/node_modules/
 backend/.env
 backend/.env.*
+!backend/.env.example
 backend/storage/documents/*
 !backend/storage/documents/.gitkeep
 

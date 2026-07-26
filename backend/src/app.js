@@ -3,6 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import rutasTransparenciaPublica from "./routes/rutasTransparenciaPublica.js";
+import { comprobarConexionBaseDatos } from "./config/baseDatos.js";
 
 const app = express();
 
@@ -27,11 +28,14 @@ app.get("/", (_solicitud, respuesta) => {
   });
 });
 
-app.get("/api/health", (_solicitud, respuesta) => {
-  respuesta.json({
-    status: "ok",
-    service: "chalma-api",
-    timestamp: new Date().toISOString(),
+app.get("/api/health", async (_solicitud, respuesta) => {
+  const baseDatosConectada = await comprobarConexionBaseDatos();
+
+  respuesta.status(baseDatosConectada ? 200 : 503).json({
+    estado: baseDatosConectada ? "ok" : "degradado",
+    servicio: "chalma-api",
+    baseDatos: baseDatosConectada ? "conectada" : "desconectada",
+    fecha: new Date().toISOString(),
   });
 });
 
