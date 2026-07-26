@@ -3,6 +3,8 @@ import { PublicLayout } from '../layouts/PublicLayout'
 import { AdminDashboardPage } from '../pages/admin/AdminDashboardPage'
 import { AdminLoginPage } from '../pages/admin/AdminLoginPage'
 import { AboutPage } from '../pages/public/AboutPage'
+import { CommonObligationDetailPage } from '../pages/public/CommonObligationDetailPage'
+import { CommonObligationsPage } from '../pages/public/CommonObligationsPage'
 import { ContactPage } from '../pages/public/ContactPage'
 import { CouncilPage } from '../pages/public/CouncilPage'
 import { DepartmentsPage } from '../pages/public/DepartmentsPage'
@@ -34,7 +36,11 @@ export function AppRoutes() {
           <Route path="/transparencia" element={<TransparencyPage />} />
           <Route
             path="/transparencia/obligaciones-comunes"
-            element={<TransparencyDocumentPage section={transparencySections.common} />}
+            element={<CommonObligationsPage />}
+          />
+          <Route
+            path="/transparencia/obligaciones-comunes/:slug"
+            element={<CommonObligationDetailPage />}
           />
           <Route
             path="/transparencia/obligaciones-especificas"

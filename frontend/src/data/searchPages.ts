@@ -50,10 +50,22 @@ export const searchPages: SearchPage[] = [
     keywords: ['transparencia', 'documentos', 'rendicion'],
   },
   {
-    title: 'Obligaciones comunes',
-    description: 'Informacion publica correspondiente a obligaciones comunes.',
+    title: 'Obligaciones Comunes (LGTAIP)',
+    description: 'Explorador de fracciones y documentos de obligaciones comunes.',
     path: '/transparencia/obligaciones-comunes',
-    keywords: ['obligaciones', 'comunes', 'documentos'],
+    keywords: ['obligaciones', 'comunes', 'lgtaip', 'articulo 15'],
+  },
+  {
+    title: 'Fraccion I.- Marco Normativo',
+    description: 'Normatividad aplicable al Ayuntamiento.',
+    path: '/transparencia/obligaciones-comunes/fraccion-i-marco-normativo',
+    keywords: ['marco', 'normativo', 'fraccion', 'lgtaip'],
+  },
+  {
+    title: 'Fraccion II.- Estructura Organica',
+    description: 'Estructura organica completa del Ayuntamiento.',
+    path: '/transparencia/obligaciones-comunes/fraccion-ii-estructura-organica',
+    keywords: ['estructura', 'organica', 'fraccion', 'lgtaip'],
   },
   {
     title: 'Obligaciones especificas',
