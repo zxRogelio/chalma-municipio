@@ -1,4 +1,4 @@
-import type { CategoriaTransparencia } from '../../data/datosTransparencia'
+import type { CategoriaTransparencia } from '../../types/transparencia'
 import { TarjetaCategoriaTransparencia } from './TarjetaCategoriaTransparencia'
 
 interface PropiedadesCuadriculaCategoriasTransparencia {

@@ -1,4 +1,4 @@
-import type { TipoArchivoDocumento } from '../../data/datosTransparencia'
+import type { TipoArchivoDocumento } from '../../types/transparencia'
 
 interface PropiedadesIconoArchivoDocumento {
   tipoArchivo: TipoArchivoDocumento

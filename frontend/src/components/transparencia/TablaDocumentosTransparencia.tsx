@@ -1,9 +1,25 @@
-import type { DocumentoTransparencia } from '../../data/datosTransparencia'
+import type { DocumentoTransparencia } from '../../types/transparencia'
 import { AccionesDocumento } from './AccionesDocumento'
 import { IconoArchivoDocumento } from './IconoArchivoDocumento'
 
 interface PropiedadesTablaDocumentosTransparencia {
   documentos: DocumentoTransparencia[]
+}
+
+function formatearTamano(tamanoBytes: number | null) {
+  if (!tamanoBytes || tamanoBytes <= 0) {
+    return 'Por definir'
+  }
+
+  if (tamanoBytes < 1024) {
+    return `${tamanoBytes} B`
+  }
+
+  if (tamanoBytes < 1024 * 1024) {
+    return `${(tamanoBytes / 1024).toFixed(1)} KB`
+  }
+
+  return `${(tamanoBytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
 export function TablaDocumentosTransparencia({
@@ -12,11 +28,8 @@ export function TablaDocumentosTransparencia({
   if (documentos.length === 0) {
     return (
       <div className="transparency-empty-state">
-        <h3>No hay archivos disponibles</h3>
-        <p>
-          Esta fraccion todavia no tiene documentos provisionales cargados. En
-          una fase posterior se conectara con la API del portal.
-        </p>
+        <h3>No hay documentos disponibles</h3>
+        <p>No hay documentos disponibles en este apartado.</p>
       </div>
     )
   }
@@ -44,10 +57,10 @@ export function TablaDocumentosTransparencia({
                   <span title={documento.titulo}>{documento.titulo}</span>
                 </div>
               </td>
-              <td>{documento.periodo.anio}</td>
-              <td>{documento.periodo.etiqueta}</td>
+              <td>{documento.ejercicioFiscal}</td>
+              <td>{documento.periodo}</td>
               <td>{documento.tipoArchivo}</td>
-              <td>{documento.tamano ?? 'Por definir'}</td>
+              <td>{formatearTamano(documento.tamanoBytes)}</td>
               <td>
                 <AccionesDocumento documento={documento} />
               </td>

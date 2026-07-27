@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
-import type { DocumentoTransparencia } from '../../data/datosTransparencia'
+import type { DocumentoTransparencia } from '../../types/transparencia'
 
 interface PropiedadesAccionesDocumento {
   documento: DocumentoTransparencia
 }
 
-const tiposVisualizables = new Set(['PDF', 'PNG', 'JPG'])
+const tiposVisualizables = new Set(['PDF', 'PNG', 'JPG', 'JPEG'])
 
 function obtenerUrlAbsoluta(url: string) {
   return new URL(url, window.location.origin).toString()
@@ -15,7 +15,9 @@ export function AccionesDocumento({
   documento,
 }: PropiedadesAccionesDocumento) {
   const [mensaje, establecerMensaje] = useState('')
-  const puedeVisualizar = tiposVisualizables.has(documento.tipoArchivo)
+  const urlPublica = documento.urlPublica
+  const tipoArchivo = documento.tipoArchivo.toUpperCase()
+  const puedeVisualizar = Boolean(urlPublica) && tiposVisualizables.has(tipoArchivo)
   const etiquetaAccion = `${documento.titulo} (${documento.tipoArchivo})`
 
   useEffect(() => {
@@ -32,12 +34,20 @@ export function AccionesDocumento({
   }, [mensaje])
 
   const copiarEnlace = async () => {
+    if (!urlPublica) {
+      return
+    }
+
     try {
-      await navigator.clipboard.writeText(obtenerUrlAbsoluta(documento.url))
+      await navigator.clipboard.writeText(obtenerUrlAbsoluta(urlPublica))
       establecerMensaje('Enlace copiado')
     } catch {
       establecerMensaje('No se pudo copiar')
     }
+  }
+
+  if (!urlPublica) {
+    return <span className="document-actions-empty">Sin archivo disponible</span>
   }
 
   return (
@@ -53,7 +63,7 @@ export function AccionesDocumento({
       {puedeVisualizar ? (
         <a
           className="document-action"
-          href={documento.url}
+          href={urlPublica}
           target="_blank"
           rel="noopener noreferrer"
           aria-label={`Visualizar ${etiquetaAccion}`}
@@ -72,8 +82,8 @@ export function AccionesDocumento({
       )}
       <a
         className="document-action document-action--download"
-        href={documento.url}
-        download={documento.nombreDescarga ?? ''}
+        href={urlPublica}
+        download={documento.nombreOriginal ?? ''}
         aria-label={`Descargar ${etiquetaAccion}`}
       >
         Descargar

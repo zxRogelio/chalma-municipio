@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import type { CategoriaTransparencia } from '../../data/datosTransparencia'
+import type { CategoriaTransparencia } from '../../types/transparencia'
 import { IconoTransparencia } from './IconoTransparencia'
 
 interface PropiedadesTarjetaCategoriaTransparencia {
@@ -9,7 +9,7 @@ interface PropiedadesTarjetaCategoriaTransparencia {
 export function TarjetaCategoriaTransparencia({
   categoria,
 }: PropiedadesTarjetaCategoriaTransparencia) {
-  const cantidadDocumentos = categoria.documentos.length
+  const cantidadDocumentos = categoria.cantidadDocumentos
   const textoDocumentos = cantidadDocumentos === 1 ? 'documento' : 'documentos'
 
   return (

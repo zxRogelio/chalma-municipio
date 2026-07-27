@@ -1,17 +1,138 @@
+import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { InternalHero } from '../../components/common/InternalHero'
 import { IconoTransparencia } from '../../components/transparencia/IconoTransparencia'
 import { TablaDocumentosTransparencia } from '../../components/transparencia/TablaDocumentosTransparencia'
-import { obtenerCategoriaObligacionComun } from '../../data/datosTransparencia'
 import { usePageTitle } from '../../hooks/usePageTitle'
+import {
+  esErrorNoEncontrado,
+  solicitudFueCancelada,
+} from '../../services/api'
+import { obtenerCategoriaPorSlug } from '../../services/servicioTransparencia'
+import type { CategoriaTransparencia } from '../../types/transparencia'
 
 export function PaginaDetalleObligacionComun() {
   const { slug } = useParams()
-  const categoria = obtenerCategoriaObligacionComun(slug)
+  const [categoria, establecerCategoria] =
+    useState<CategoriaTransparencia | null>(null)
+  const [estaCargando, establecerEstaCargando] = useState(true)
+  const [mensajeError, establecerMensajeError] = useState('')
+  const [categoriaNoEncontrada, establecerCategoriaNoEncontrada] =
+    useState(false)
+  const [intento, establecerIntento] = useState(0)
 
-  usePageTitle(categoria?.titulo ?? 'Categoria no encontrada')
+  usePageTitle(
+    categoria?.titulo ??
+      (categoriaNoEncontrada ? 'Categoria no encontrada' : 'Transparencia'),
+  )
 
-  if (!categoria) {
+  useEffect(() => {
+    const controlador = new AbortController()
+
+    if (!slug) {
+      establecerCategoria(null)
+      establecerCategoriaNoEncontrada(true)
+      establecerEstaCargando(false)
+      return () => controlador.abort()
+    }
+
+    establecerEstaCargando(true)
+    establecerMensajeError('')
+    establecerCategoriaNoEncontrada(false)
+
+    obtenerCategoriaPorSlug(slug, {
+      signal: controlador.signal,
+    })
+      .then((datos) => {
+        establecerCategoria(datos)
+      })
+      .catch((error: unknown) => {
+        if (solicitudFueCancelada(error)) {
+          return
+        }
+
+        establecerCategoria(null)
+
+        if (esErrorNoEncontrado(error)) {
+          establecerCategoriaNoEncontrada(true)
+          return
+        }
+
+        console.error(error)
+        establecerMensajeError(
+          'No fue posible cargar la informacion de transparencia.',
+        )
+      })
+      .finally(() => {
+        if (!controlador.signal.aborted) {
+          establecerEstaCargando(false)
+        }
+      })
+
+    return () => controlador.abort()
+  }, [slug, intento])
+
+  if (estaCargando) {
+    return (
+      <main className="internal-main">
+        <InternalHero
+          eyebrow="Transparencia"
+          title="Cargando categoria"
+          description="Consultando la informacion publicada por el portal municipal."
+          breadcrumbs={[
+            { label: 'Transparencia', to: '/transparencia' },
+            {
+              label: 'Obligaciones Comunes (LGTAIP)',
+              to: '/transparencia/obligaciones-comunes',
+            },
+            { label: 'Cargando' },
+          ]}
+        />
+        <section className="section">
+          <div className="container transparency-detail">
+            <div className="transparency-skeleton-card transparency-skeleton-card--wide" />
+            <div className="transparency-skeleton-card transparency-skeleton-card--table" />
+          </div>
+        </section>
+      </main>
+    )
+  }
+
+  if (mensajeError) {
+    return (
+      <main className="internal-main">
+        <InternalHero
+          eyebrow="Transparencia"
+          title="Transparencia"
+          description="No fue posible consultar la informacion del apartado."
+          breadcrumbs={[
+            { label: 'Transparencia', to: '/transparencia' },
+            {
+              label: 'Obligaciones Comunes (LGTAIP)',
+              to: '/transparencia/obligaciones-comunes',
+            },
+            { label: 'Error de consulta' },
+          ]}
+        />
+        <section className="section">
+          <div className="container">
+            <div className="transparency-empty-state transparency-empty-state--error">
+              <h2>{mensajeError}</h2>
+              <button
+                className="button button--primary"
+                type="button"
+                onClick={() => establecerIntento((valor) => valor + 1)}
+              >
+                Reintentar
+              </button>
+            </div>
+          </div>
+        </section>
+      </main>
+    )
+  }
+
+  if (categoriaNoEncontrada || !categoria) {
     return (
       <main className="internal-main">
         <InternalHero
@@ -48,16 +169,22 @@ export function PaginaDetalleObligacionComun() {
     )
   }
 
+  const documentos = categoria.documentos ?? []
+  const etiquetaCategoriaPadre =
+    categoria.categoriaPadre?.titulo ?? 'Obligaciones Comunes (LGTAIP)'
+
   return (
     <main className="internal-main">
       <InternalHero
         eyebrow="Transparencia"
         title={categoria.titulo}
-        description={categoria.descripcion}
+        description={
+          categoria.descripcion ?? 'Informacion de transparencia municipal.'
+        }
         breadcrumbs={[
           { label: 'Transparencia', to: '/transparencia' },
           {
-            label: 'Obligaciones Comunes (LGTAIP)',
+            label: etiquetaCategoriaPadre,
             to: '/transparencia/obligaciones-comunes',
           },
           { label: categoria.titulo },
@@ -100,13 +227,14 @@ export function PaginaDetalleObligacionComun() {
                     Archivos disponibles
                   </h2>
                   <p>
-                    Los archivos mostrados son provisionales y no sustituyen
-                    documentos oficiales.
+                    {documentos.length === 1
+                      ? 'Este apartado tiene 1 documento publicado.'
+                      : `Este apartado tiene ${documentos.length} documentos publicados.`}
                   </p>
                 </div>
               </div>
             </div>
-            <TablaDocumentosTransparencia documentos={categoria.documentos} />
+            <TablaDocumentosTransparencia documentos={documentos} />
           </section>
         </div>
       </section>
