@@ -1,8 +1,10 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { LayoutAdministrador } from '../components/admin/LayoutAdministrador'
 import { RutaAdministrador } from '../components/admin/RutaAdministrador'
 import { PublicLayout } from '../layouts/PublicLayout'
 import { AdminDashboardPage } from '../pages/admin/AdminDashboardPage'
 import { AdminLoginPage } from '../pages/admin/AdminLoginPage'
+import { PaginaCategoriasAdministracion } from '../pages/admin/PaginaCategoriasAdministracion'
 import { AboutPage } from '../pages/public/AboutPage'
 import { ContactPage } from '../pages/public/ContactPage'
 import { CouncilPage } from '../pages/public/CouncilPage'
@@ -25,7 +27,13 @@ export function RutasAplicacion() {
       <Routes>
         <Route path="/admin/login" element={<AdminLoginPage />} />
         <Route element={<RutaAdministrador />}>
-          <Route path="/admin" element={<AdminDashboardPage />} />
+          <Route path="/admin" element={<LayoutAdministrador />}>
+            <Route index element={<AdminDashboardPage />} />
+            <Route
+              path="transparencia/categorias"
+              element={<PaginaCategoriasAdministracion />}
+            />
+          </Route>
         </Route>
 
         <Route element={<PublicLayout />}>

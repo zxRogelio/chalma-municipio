@@ -53,11 +53,6 @@ export function AdminDashboardPage() {
     }
   }, [cerrarSesion, navegar])
 
-  const cerrarSesionAdministrador = async () => {
-    await cerrarSesion()
-    navegar('/admin/login', { replace: true })
-  }
-
   const ultimoAcceso = administrador?.ultimoAcceso
     ? new Intl.DateTimeFormat('es-MX', {
         dateStyle: 'medium',
@@ -66,50 +61,47 @@ export function AdminDashboardPage() {
     : 'Sin registro'
 
   return (
-    <main className="admin-page">
-      <section className="admin-panel">
-        <p className="eyebrow">Administracion</p>
-        <h1>Panel administrativo</h1>
-        <p>{mensajeResumen}</p>
-        <dl className="admin-session">
-          <div>
-            <dt>Administrador</dt>
-            <dd>{administrador?.nombre}</dd>
-          </div>
-          <div>
-            <dt>Usuario</dt>
-            <dd>{administrador?.nombreUsuario}</dd>
-          </div>
-          <div>
-            <dt>Rol</dt>
-            <dd>{administrador?.rol}</dd>
-          </div>
-          <div>
-            <dt>Ultimo acceso</dt>
-            <dd>{ultimoAcceso}</dd>
-          </div>
-        </dl>
-        <p className="admin-note">
-          La gestion de transparencia se agregara en la siguiente fase.
-        </p>
-        {estaCargandoResumen ? (
-          <p className="admin-status" aria-live="polite">
-            Validando ruta protegida.
-          </p>
-        ) : null}
-        <div className="admin-actions">
-          <button
-            className="button button--primary"
-            type="button"
-            onClick={cerrarSesionAdministrador}
-          >
-            Cerrar sesion
-          </button>
-          <Link className="button button--secondary" to="/">
-            Ver portal publico
-          </Link>
+    <div>
+      <div className="admin-page-heading">
+        <div>
+          <p className="eyebrow">Resumen</p>
+          <h2>Panel administrativo</h2>
+          <p>{mensajeResumen}</p>
         </div>
-      </section>
-    </main>
+      </div>
+      <dl className="admin-session">
+        <div>
+          <dt>Administrador</dt>
+          <dd>{administrador?.nombre}</dd>
+        </div>
+        <div>
+          <dt>Usuario</dt>
+          <dd>{administrador?.nombreUsuario}</dd>
+        </div>
+        <div>
+          <dt>Rol</dt>
+          <dd>{administrador?.rol}</dd>
+        </div>
+        <div>
+          <dt>Ultimo acceso</dt>
+          <dd>{ultimoAcceso}</dd>
+        </div>
+      </dl>
+      {estaCargandoResumen ? (
+        <p className="admin-status" aria-live="polite">
+          Validando ruta protegida.
+        </p>
+      ) : null}
+      <div className="admin-dashboard-actions">
+        <Link className="admin-feature-link" to="/admin/transparencia/categorias">
+          <strong>Gestionar categorias y fracciones</strong>
+          <span>Crear secciones, fracciones y subcategorias.</span>
+        </Link>
+        <span className="admin-feature-link admin-feature-link--disabled">
+          <strong>Documentos</strong>
+          <span>Proximamente</span>
+        </span>
+      </div>
+    </div>
   )
 }
