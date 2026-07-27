@@ -1,5 +1,44 @@
 export type NavGroupKey = 'government' | 'transparency'
 
+export type IconoPortalTipo =
+  | 'inicio'
+  | 'gobierno'
+  | 'organigrama'
+  | 'directorio'
+  | 'transparencia'
+  | 'obligaciones'
+  | 'documento'
+  | 'carpeta'
+  | 'obras'
+  | 'fondos'
+  | 'finanzas'
+  | 'cuentaPublica'
+  | 'licitaciones'
+  | 'tramites'
+  | 'servicios'
+  | 'contacto'
+  | 'telefono'
+  | 'correo'
+  | 'ubicacion'
+  | 'horario'
+  | 'buscar'
+  | 'accesibilidad'
+  | 'descargar'
+  | 'copiar'
+  | 'calendario'
+  | 'informacion'
+  | 'flecha'
+  | 'menu'
+  | 'cerrar'
+  | 'facebook'
+  | 'instagram'
+  | 'x'
+  | 'youtube'
+  | 'area'
+  | 'volver'
+  | 'externo'
+  | 'reintentar'
+
 export type IconoTransparenciaTipo =
   | 'plataforma'
   | 'obligaciones'
@@ -17,13 +56,14 @@ export interface NavItem {
   description?: string
   external?: boolean
   icono?: IconoTransparenciaTipo
+  iconoPortal?: IconoPortalTipo
 }
 
 export interface QuickAccessItem {
   title: string
   description: string
   to: string
-  icon: string
+  icon: IconoPortalTipo
 }
 
 export interface SearchPage {

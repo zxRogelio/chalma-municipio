@@ -1,10 +1,13 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { LayoutAdministrador } from '../components/admin/LayoutAdministrador'
 import { RutaAdministrador } from '../components/admin/RutaAdministrador'
 import { PublicLayout } from '../layouts/PublicLayout'
 import { AdminDashboardPage } from '../pages/admin/AdminDashboardPage'
 import { AdminLoginPage } from '../pages/admin/AdminLoginPage'
-import { PaginaCategoriasAdministracion } from '../pages/admin/PaginaCategoriasAdministracion'
+import { PaginaDetalleCategoriaAdministracion } from '../pages/admin/PaginaDetalleCategoriaAdministracion'
+import { PaginaDocumentosCategoriaAdministracion } from '../pages/admin/PaginaDocumentosCategoriaAdministracion'
+import { PaginaSeccionTransparenciaAdministracion } from '../pages/admin/PaginaSeccionTransparenciaAdministracion'
+import { PaginaTransparenciaAdministracion } from '../pages/admin/PaginaTransparenciaAdministracion'
 import { AboutPage } from '../pages/public/AboutPage'
 import { ContactPage } from '../pages/public/ContactPage'
 import { CouncilPage } from '../pages/public/CouncilPage'
@@ -30,8 +33,24 @@ export function RutasAplicacion() {
           <Route path="/admin" element={<LayoutAdministrador />}>
             <Route index element={<AdminDashboardPage />} />
             <Route
+              path="transparencia"
+              element={<PaginaTransparenciaAdministracion />}
+            />
+            <Route
+              path="transparencia/secciones/:id"
+              element={<PaginaSeccionTransparenciaAdministracion />}
+            />
+            <Route
               path="transparencia/categorias"
-              element={<PaginaCategoriasAdministracion />}
+              element={<Navigate to="/admin/transparencia" replace />}
+            />
+            <Route
+              path="transparencia/categorias/:id"
+              element={<PaginaDetalleCategoriaAdministracion />}
+            />
+            <Route
+              path="transparencia/categorias/:id/documentos"
+              element={<PaginaDocumentosCategoriaAdministracion />}
             />
           </Route>
         </Route>

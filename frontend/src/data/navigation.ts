@@ -5,28 +5,39 @@ export const governmentNavigation: NavItem[] = [
     label: 'Acerca de',
     to: '/gobierno/acerca-de',
     description: 'Informacion institucional del Ayuntamiento.',
+    iconoPortal: 'informacion',
   },
   {
     label: 'Organigrama',
     to: '/gobierno/organigrama',
     description: 'Estructura organica municipal.',
+    iconoPortal: 'organigrama',
   },
   {
     label: 'Cabildo',
     to: '/gobierno/cabildo',
     description: 'Integrantes del Cabildo Municipal.',
+    iconoPortal: 'gobierno',
   },
   {
     label: 'Directorio',
     to: '/gobierno/directorio',
     description: 'Areas y datos de contacto.',
+    iconoPortal: 'directorio',
   },
   {
     label: 'Dependencias',
     to: '/gobierno/dependencias',
     description: 'Areas administrativas y servicios.',
+    iconoPortal: 'area',
   },
 ]
+
+export const governmentHeaderNavigation = governmentNavigation.filter(
+  (item) =>
+    item.to === '/gobierno/organigrama' ||
+    item.to === '/gobierno/directorio',
+)
 
 export const transparencyNavigation: NavItem[] = [
   {
@@ -85,25 +96,25 @@ export const quickAccess: QuickAccessItem[] = [
     title: 'Directorio',
     description: 'Consulta las areas y datos de contacto.',
     to: '/gobierno/directorio',
-    icon: 'tel',
+    icon: 'directorio',
   },
   {
     title: 'Organigrama',
     description: 'Conoce la estructura del Ayuntamiento.',
     to: '/gobierno/organigrama',
-    icon: 'org',
+    icon: 'organigrama',
   },
   {
     title: 'Transparencia',
     description: 'Accede a documentos y obligaciones publicas.',
     to: '/transparencia',
-    icon: 'doc',
+    icon: 'transparencia',
   },
   {
     title: 'Atencion ciudadana',
     description: 'Comunicate con Presidencia Municipal.',
     to: '/contacto',
-    icon: 'mail',
+    icon: 'contacto',
   },
 ]
 

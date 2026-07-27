@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { IconoPortal } from '../../components/common/IconoPortal'
 import { InternalHero } from '../../components/common/InternalHero'
 import { IconoTransparencia } from '../../components/transparencia/IconoTransparencia'
 import { TablaDocumentosTransparencia } from '../../components/transparencia/TablaDocumentosTransparencia'
@@ -129,6 +130,7 @@ export function PaginaDocumentosTransparencia({
                 type="button"
                 onClick={() => establecerIntento((valor) => valor + 1)}
               >
+                <IconoPortal tipo="reintentar" className="button-icon" />
                 Reintentar
               </button>
             </div>

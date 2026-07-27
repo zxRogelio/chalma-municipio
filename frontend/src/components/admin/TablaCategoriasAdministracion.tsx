@@ -3,11 +3,14 @@ import { etiquetasTipoSeccion } from '../../types/categoriasAdministracion'
 
 interface PropiedadesTablaCategoriasAdministracion {
   categorias: CategoriaAdministracion[]
+  onAdministrar?: (categoria: CategoriaAdministracion) => void
+  etiquetaAdministrar?: string
+  onInformacion?: (categoria: CategoriaAdministracion) => void
   onEditar: (categoria: CategoriaAdministracion) => void
   onCambiarEstado: (categoria: CategoriaAdministracion) => void
 }
 
-function obtenerRutaPublica(categoria: CategoriaAdministracion) {
+export function obtenerRutaPublicaCategoria(categoria: CategoriaAdministracion) {
   const rutasPorTipo: Partial<Record<string, string>> = {
     obligaciones_especificas: '/transparencia/obligaciones-especificas',
     obras_publicas: '/transparencia/obras-publicas',
@@ -34,6 +37,9 @@ function obtenerRutaPublica(categoria: CategoriaAdministracion) {
 
 export function TablaCategoriasAdministracion({
   categorias,
+  onAdministrar,
+  etiquetaAdministrar = 'Administrar',
+  onInformacion,
   onEditar,
   onCambiarEstado,
 }: PropiedadesTablaCategoriasAdministracion) {
@@ -55,7 +61,7 @@ export function TablaCategoriasAdministracion({
         </thead>
         <tbody>
           {categorias.map((categoria) => {
-            const rutaPublica = obtenerRutaPublica(categoria)
+            const rutaPublica = obtenerRutaPublicaCategoria(categoria)
 
             return (
               <tr key={categoria.id}>
@@ -83,6 +89,22 @@ export function TablaCategoriasAdministracion({
                 </td>
                 <td>
                   <div className="admin-table-actions">
+                    {onAdministrar ? (
+                      <button
+                        type="button"
+                        onClick={() => onAdministrar(categoria)}
+                      >
+                        {etiquetaAdministrar}
+                      </button>
+                    ) : null}
+                    {onInformacion ? (
+                      <button
+                        type="button"
+                        onClick={() => onInformacion(categoria)}
+                      >
+                        Informacion
+                      </button>
+                    ) : null}
                     <button type="button" onClick={() => onEditar(categoria)}>
                       Editar
                     </button>

@@ -94,6 +94,10 @@ export const esquemaCambiarEstadoCategoria = z
 
 export const esquemaListarCategorias = z
   .object({
+    soloRaices: z
+      .union([z.literal("true"), z.literal("false"), z.boolean()])
+      .optional()
+      .transform((valor) => valor === true || valor === "true"),
     tipoSeccion: z
       .union([z.enum(TIPOS_SECCION_TRANSPARENCIA), z.literal("")])
       .optional(),

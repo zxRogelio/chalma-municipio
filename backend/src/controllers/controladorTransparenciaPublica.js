@@ -1,4 +1,7 @@
 import {
+  servirArchivoDocumentoPublico,
+} from "./controladorDocumentosAdministracion.js";
+import {
   obtenerCategoriaPorSlug,
   obtenerDocumentosPorCategoria,
   obtenerSeccionPorSlug,
@@ -143,3 +146,5 @@ export async function listarDocumentosDeCategoria(
     return ocurrioError(respuesta);
   }
 }
+
+export const servirArchivoDocumento = servirArchivoDocumentoPublico;

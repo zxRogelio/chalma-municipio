@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { IconoPortal } from '../../components/common/IconoPortal'
 import { InternalHero } from '../../components/common/InternalHero'
 import { governmentNavigation } from '../../data/navigation'
 import { usePageTitle } from '../../hooks/usePageTitle'
@@ -24,7 +25,10 @@ export function GovernmentPage() {
           <div className="quick-grid quick-grid--wide">
             {governmentNavigation.map((item) => (
               <Link className="quick-card" to={item.to} key={item.to}>
-                <span className="quick-icon quick-icon--gov" aria-hidden="true" />
+                <IconoPortal
+                  tipo={item.iconoPortal ?? 'gobierno'}
+                  className="quick-icon"
+                />
                 <h3>{item.label}</h3>
                 <p>{item.description}</p>
               </Link>

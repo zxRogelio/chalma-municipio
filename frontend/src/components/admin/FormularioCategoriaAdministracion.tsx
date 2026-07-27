@@ -12,6 +12,8 @@ import {
 
 interface PropiedadesFormularioCategoriaAdministracion {
   categoria?: CategoriaAdministracion | null
+  categoriaPadreFija?: CategoriaAdministracion | null
+  bloquearCategoriaPadre?: boolean
   categoriasDisponibles: CategoriaAdministracion[]
   estaEnviando: boolean
   mensajeError: string
@@ -48,6 +50,8 @@ function obtenerDescendientes(
 
 export function FormularioCategoriaAdministracion({
   categoria,
+  categoriaPadreFija,
+  bloquearCategoriaPadre = false,
   categoriasDisponibles,
   estaEnviando,
   mensajeError,
@@ -63,17 +67,27 @@ export function FormularioCategoriaAdministracion({
   )
   const [tipoSeccion, establecerTipoSeccion] =
     useState<TipoSeccionTransparencia>(
-      categoria?.tipoSeccion ?? 'obligaciones_comunes',
+      categoria?.tipoSeccion ??
+        categoriaPadreFija?.tipoSeccion ??
+        'obligaciones_comunes',
     )
   const [categoriaPadreId, establecerCategoriaPadreId] = useState<
     number | null
-  >(categoria?.categoriaPadreId ?? null)
+  >(
+    bloquearCategoriaPadre
+      ? categoriaPadreFija?.id ?? null
+      : categoria?.categoriaPadreId ?? categoriaPadreFija?.id ?? null,
+  )
   const [orden, establecerOrden] = useState(categoria?.orden ?? 0)
   const [estaActivo, establecerEstaActivo] = useState(
     categoria?.estaActivo ?? true,
   )
 
   const categoriasPadreDisponibles = useMemo(() => {
+    if (bloquearCategoriaPadre) {
+      return []
+    }
+
     if (!categoria) {
       return categoriasDisponibles
     }
@@ -87,11 +101,16 @@ export function FormularioCategoriaAdministracion({
       (opcion) =>
         opcion.id !== categoria.id && !descendientes.has(opcion.id),
     )
-  }, [categoria, categoriasDisponibles])
+  }, [bloquearCategoriaPadre, categoria, categoriasDisponibles])
 
   const categoriaPadreSeleccionada = categoriasPadreDisponibles.find(
     (opcion) => opcion.id === categoriaPadreId,
   )
+  const categoriaPadreBloqueada =
+    bloquearCategoriaPadre || Boolean(categoriaPadreFija && !categoria)
+  const categoriaPadreIdGuardada = categoriaPadreBloqueada
+    ? categoriaPadreFija?.id ?? null
+    : categoriaPadreId
 
   useEffect(() => {
     if (categoriaPadreSeleccionada) {
@@ -107,7 +126,7 @@ export function FormularioCategoriaAdministracion({
       descripcion: descripcion.trim(),
       fundamentoLegal: fundamentoLegal.trim(),
       tipoSeccion,
-      categoriaPadreId,
+      categoriaPadreId: categoriaPadreIdGuardada,
       orden,
       estaActivo,
     })
@@ -156,6 +175,7 @@ export function FormularioCategoriaAdministracion({
         <select
           id="categoria-padre"
           value={categoriaPadreId ?? ''}
+          disabled={categoriaPadreBloqueada}
           onChange={(evento) => {
             const valor = evento.target.value
             establecerCategoriaPadreId(valor ? Number(valor) : null)

@@ -93,9 +93,9 @@ export function AdminDashboardPage() {
         </p>
       ) : null}
       <div className="admin-dashboard-actions">
-        <Link className="admin-feature-link" to="/admin/transparencia/categorias">
-          <strong>Gestionar categorias y fracciones</strong>
-          <span>Crear secciones, fracciones y subcategorias.</span>
+        <Link className="admin-feature-link" to="/admin/transparencia">
+          <strong>Gestionar transparencia</strong>
+          <span>Administrar secciones, fracciones y subcategorias.</span>
         </Link>
         <span className="admin-feature-link admin-feature-link--disabled">
           <strong>Documentos</strong>

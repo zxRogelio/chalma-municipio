@@ -10,6 +10,8 @@ import {
   crearCategoriaAdministracion,
   esErrorCategoriaAdministracion,
   listarCategoriasAdministracion,
+  listarSeccionesPrincipalesAdministracion,
+  listarSubcategoriasAdministracion,
   obtenerCategoriaAdministracionPorId,
 } from "../services/servicioCategoriasAdministracion.js";
 
@@ -63,6 +65,46 @@ export async function listarCategorias(solicitud, respuesta) {
 
   try {
     const datos = await listarCategoriasAdministracion(resultado.data);
+
+    return respuesta.json({
+      exito: true,
+      cantidad: datos.length,
+      datos,
+    });
+  } catch (error) {
+    return responderErrorControlado(respuesta, error);
+  }
+}
+
+export async function listarSeccionesPrincipales(_solicitud, respuesta) {
+  try {
+    const datos = await listarSeccionesPrincipalesAdministracion();
+
+    return respuesta.json({
+      exito: true,
+      cantidad: datos.length,
+      datos,
+    });
+  } catch (error) {
+    return responderErrorControlado(respuesta, error);
+  }
+}
+
+export async function listarSubcategorias(solicitud, respuesta) {
+  const id = obtenerIdParametro(solicitud);
+
+  if (!id) {
+    return responderDatosInvalidos(respuesta);
+  }
+
+  try {
+    const categoria = await obtenerCategoriaAdministracionPorId(id);
+
+    if (!categoria) {
+      return responderNoEncontrada(respuesta);
+    }
+
+    const datos = await listarSubcategoriasAdministracion(id);
 
     return respuesta.json({
       exito: true,

@@ -6,8 +6,8 @@ export function NavegacionAdministrador() {
       <NavLink to="/admin" end>
         Resumen
       </NavLink>
-      <NavLink to="/admin/transparencia/categorias">
-        Categorias y fracciones
+      <NavLink to="/admin/transparencia">
+        Transparencia
       </NavLink>
       <span className="admin-nav-disabled" aria-disabled="true">
         Documentos <small>Proximamente</small>

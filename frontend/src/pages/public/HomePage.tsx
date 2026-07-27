@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { IconoPortal } from '../../components/common/IconoPortal'
 import { IconoTransparencia } from '../../components/transparencia/IconoTransparencia'
 import { quickAccess, transparencyShortcuts } from '../../data/navigation'
 import { usePageTitle } from '../../hooks/usePageTitle'
@@ -12,7 +13,7 @@ export function HomePage() {
         <div className="hero-content container">
           <img
             className="hero-logo"
-            src="/assets/img/logo-chalma-oficial.png"
+            src="/assets/img/logo_sin_fondo.png"
             alt="Logo oficial del H. Ayuntamiento de Chalma"
           />
           <p className="hero-kicker">Gobierno municipal</p>
@@ -23,15 +24,17 @@ export function HomePage() {
           </p>
           <div className="hero-actions">
             <Link className="button button--primary" to="/transparencia">
+              <IconoPortal tipo="transparencia" className="button-icon" />
               Consultar transparencia
             </Link>
             <Link className="button button--ghost" to="/tramites-servicios">
+              <IconoPortal tipo="tramites" className="button-icon" />
               Tramites y servicios
             </Link>
           </div>
         </div>
         <a className="scroll-indicator" href="#accesos" aria-label="Ir a accesos rapidos">
-          ↓
+          <IconoPortal tipo="flecha" className="scroll-indicator-icon" />
         </a>
       </section>
 
@@ -48,7 +51,7 @@ export function HomePage() {
           <div className="quick-grid">
             {quickAccess.map((item) => (
               <Link className="quick-card" to={item.to} key={item.title}>
-                <span className={`quick-icon quick-icon--${item.icon}`} aria-hidden="true" />
+                <IconoPortal tipo={item.icon} className="quick-icon" />
                 <h3>{item.title}</h3>
                 <p>{item.description}</p>
               </Link>
@@ -77,7 +80,7 @@ export function HomePage() {
                   />
                   {item.label}
                 </span>
-                <span aria-hidden="true">→</span>
+                <IconoPortal tipo="flecha" className="shortcut-arrow" />
               </Link>
             ))}
           </div>
@@ -96,17 +99,23 @@ export function HomePage() {
           </div>
           <div className="contact-list">
             <a href="tel:0000000000">
-              <span className="contact-icon contact-icon--phone" aria-hidden="true" />
+              <span className="contact-icon" aria-hidden="true">
+                <IconoPortal tipo="telefono" />
+              </span>
               <strong>Telefono</strong>
               <small>000 000 00 00</small>
             </a>
             <a href="mailto:contacto@chalma.gob.mx">
-              <span className="contact-icon contact-icon--mail" aria-hidden="true" />
+              <span className="contact-icon" aria-hidden="true">
+                <IconoPortal tipo="correo" />
+              </span>
               <strong>Correo</strong>
               <small>contacto@chalma.gob.mx</small>
             </a>
             <div>
-              <span className="contact-icon contact-icon--place" aria-hidden="true" />
+              <span className="contact-icon" aria-hidden="true">
+                <IconoPortal tipo="ubicacion" />
+              </span>
               <strong>Direccion</strong>
               <small>Palacio Municipal de Chalma, Veracruz</small>
             </div>

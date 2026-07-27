@@ -1,6 +1,17 @@
+import { IconoPortal } from '../../components/common/IconoPortal'
 import { InternalHero } from '../../components/common/InternalHero'
 import { departments } from '../../data/siteContent'
 import { usePageTitle } from '../../hooks/usePageTitle'
+import type { IconoPortalTipo } from '../../types/site'
+
+const iconosPorDependencia: Record<string, IconoPortalTipo> = {
+  home: 'gobierno',
+  cash: 'finanzas',
+  works: 'obras',
+  people: 'area',
+  shield: 'informacion',
+  services: 'servicios',
+}
 
 export function DepartmentsPage() {
   usePageTitle('Dependencias')
@@ -23,13 +34,14 @@ export function DepartmentsPage() {
           <div className="department-grid">
             {departments.map((department) => (
               <article key={department.title}>
-                <span
-                  className={`department-icon department-icon--${department.icon}`}
-                  aria-hidden="true"
+                <IconoPortal
+                  tipo={iconosPorDependencia[department.icon] ?? 'area'}
+                  className="department-icon"
                 />
                 <h3>{department.title}</h3>
                 <p>{department.description}</p>
                 <button type="button" disabled>
+                  <IconoPortal tipo="horario" className="button-icon" />
                   Pendiente
                 </button>
               </article>

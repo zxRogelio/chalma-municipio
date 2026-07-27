@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
+import { IconoPortal } from '../common/IconoPortal'
 import type { CategoriaTransparencia } from '../../types/transparencia'
-import { IconoTransparencia } from './IconoTransparencia'
 
 interface PropiedadesTarjetaCategoriaTransparencia {
   categoria: CategoriaTransparencia
@@ -19,7 +19,7 @@ export function TarjetaCategoriaTransparencia({
       title={categoria.titulo}
       aria-label={`${categoria.titulo}, ${cantidadDocumentos} ${textoDocumentos}`}
     >
-      <IconoTransparencia tipo="obligaciones" className="folder-icon" />
+      <IconoPortal tipo="carpeta" className="folder-icon" />
       <h3>{categoria.titulo}</h3>
       <p>
         {cantidadDocumentos} {textoDocumentos}

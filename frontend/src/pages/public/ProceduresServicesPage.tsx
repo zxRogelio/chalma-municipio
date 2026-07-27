@@ -1,3 +1,4 @@
+import { IconoPortal } from '../../components/common/IconoPortal'
 import { InternalHero } from '../../components/common/InternalHero'
 import { usePageTitle } from '../../hooks/usePageTitle'
 
@@ -15,8 +16,13 @@ export function ProceduresServicesPage() {
       <section className="section">
         <div className="container content-grid">
           <article className="content-card content-card--large">
-            <p className="eyebrow">Proximamente</p>
-            <h2>Catalogo municipal</h2>
+            <div className="heading-with-icon">
+              <IconoPortal tipo="tramites" className="portal-heading-icon" />
+              <div>
+                <p className="eyebrow">Proximamente</p>
+                <h2>Catalogo municipal</h2>
+              </div>
+            </div>
             <p>
               En una fase posterior se agregaran los tramites, servicios,
               requisitos, horarios y formatos oficiales del municipio.
@@ -27,7 +33,10 @@ export function ProceduresServicesPage() {
             </p>
           </article>
           <aside className="highlight-card">
-            <h2>Estado</h2>
+            <div className="heading-with-icon heading-with-icon--dark">
+              <IconoPortal tipo="calendario" className="portal-heading-icon" />
+              <h2>Estado</h2>
+            </div>
             <dl>
               <div>
                 <dt>Publicacion</dt>

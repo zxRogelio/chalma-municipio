@@ -26,6 +26,10 @@ function normalizarTextoNullable(valor) {
 function obtenerWhereFiltros(filtros = {}) {
   const where = {};
 
+  if (filtros.soloRaices) {
+    where.categoriaPadreId = null;
+  }
+
   if (filtros.tipoSeccion) {
     where.tipoSeccion = filtros.tipoSeccion;
   }
@@ -41,7 +45,10 @@ function obtenerWhereFiltros(filtros = {}) {
     where.estaActivo = false;
   }
 
-  if (filtros.categoriaPadreId) {
+  if (
+    !filtros.soloRaices &&
+    filtros.categoriaPadreId !== undefined
+  ) {
     where.categoriaPadreId = filtros.categoriaPadreId;
   }
 
@@ -146,6 +153,14 @@ export async function listarCategoriasAdministracion(filtros = {}) {
       convertirCategoriaAdministrativaSegura(categoria)
     )
   );
+}
+
+export async function listarSeccionesPrincipalesAdministracion() {
+  return listarCategoriasAdministracion({ soloRaices: true });
+}
+
+export async function listarSubcategoriasAdministracion(categoriaPadreId) {
+  return listarCategoriasAdministracion({ categoriaPadreId });
 }
 
 export async function obtenerCategoriaAdministracionPorId(id) {

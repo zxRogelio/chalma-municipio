@@ -41,6 +41,7 @@ export interface DatosCategoriaAdministracion {
 }
 
 export interface FiltrosCategoriasAdministracion {
+  soloRaices?: boolean
   tipoSeccion?: TipoSeccionTransparencia | ''
   estaActivo?: 'todos' | 'activas' | 'inactivas'
   categoriaPadreId?: number | null
@@ -79,4 +80,16 @@ export const etiquetasTipoSeccion: Record<TipoSeccionTransparencia, string> = {
   informacion_financiera: 'Informacion financiera',
   cuenta_publica: 'Cuenta publica',
   licitaciones: 'Licitaciones',
+}
+
+export function puedeCrearSubcategorias(
+  categoria: Pick<
+    CategoriaAdministracion,
+    'tipoSeccion' | 'categoriaPadreId'
+  >,
+) {
+  return !(
+    categoria.tipoSeccion === 'obligaciones_comunes' &&
+    categoria.categoriaPadreId !== null
+  )
 }

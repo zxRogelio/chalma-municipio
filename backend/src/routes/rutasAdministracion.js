@@ -1,5 +1,9 @@
 import { Router } from "express";
+import {
+  listarSeccionesPrincipales,
+} from "../controllers/controladorCategoriasAdministracion.js";
 import rutasCategoriasAdministracion from "./rutasCategoriasAdministracion.js";
+import rutasDocumentosAdministracion from "./rutasDocumentosAdministracion.js";
 
 const rutasAdministracion = Router();
 
@@ -12,6 +16,16 @@ rutasAdministracion.get("/resumen", (solicitud, respuesta) => {
     },
   });
 });
+
+rutasAdministracion.get(
+  "/transparencia/secciones",
+  listarSeccionesPrincipales
+);
+
+rutasAdministracion.use(
+  "/transparencia",
+  rutasDocumentosAdministracion
+);
 
 rutasAdministracion.use(
   "/transparencia/categorias",

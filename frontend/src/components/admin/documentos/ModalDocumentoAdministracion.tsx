@@ -1,33 +1,27 @@
 import { useEffect } from 'react'
 import type {
-  CategoriaAdministracion,
-  DatosCategoriaAdministracion,
-} from '../../types/categoriasAdministracion'
-import { FormularioCategoriaAdministracion } from './FormularioCategoriaAdministracion'
+  DatosFormularioDocumentoAdministracion,
+  DocumentoAdministracion,
+} from '../../../types/documentosAdministracion'
+import { FormularioDocumentoAdministracion } from './FormularioDocumentoAdministracion'
 
-interface PropiedadesModalCategoriaAdministracion {
+interface PropiedadesModalDocumentoAdministracion {
   abierto: boolean
-  categoria?: CategoriaAdministracion | null
-  categoriaPadreFija?: CategoriaAdministracion | null
-  bloquearCategoriaPadre?: boolean
-  categoriasDisponibles: CategoriaAdministracion[]
+  documento?: DocumentoAdministracion | null
   estaEnviando: boolean
   mensajeError: string
   onCerrar: () => void
-  onGuardar: (datos: DatosCategoriaAdministracion) => Promise<void>
+  onGuardar: (datos: DatosFormularioDocumentoAdministracion) => Promise<void>
 }
 
-export function ModalCategoriaAdministracion({
+export function ModalDocumentoAdministracion({
   abierto,
-  categoria,
-  categoriaPadreFija,
-  bloquearCategoriaPadre = false,
-  categoriasDisponibles,
+  documento,
   estaEnviando,
   mensajeError,
   onCerrar,
   onGuardar,
-}: PropiedadesModalCategoriaAdministracion) {
+}: PropiedadesModalDocumentoAdministracion) {
   useEffect(() => {
     if (!abierto) {
       return undefined
@@ -53,21 +47,18 @@ export function ModalCategoriaAdministracion({
         className="admin-modal"
         role="dialog"
         aria-modal="true"
-        aria-labelledby="titulo-modal-categoria"
+        aria-labelledby="titulo-modal-documento"
       >
         <div className="admin-modal-header">
-          <h2 id="titulo-modal-categoria">
-            {categoria ? 'Editar categoria' : 'Nueva categoria'}
+          <h2 id="titulo-modal-documento">
+            {documento ? 'Editar informacion' : 'Subir documento'}
           </h2>
           <button type="button" aria-label="Cerrar modal" onClick={onCerrar}>
             x
           </button>
         </div>
-        <FormularioCategoriaAdministracion
-          categoria={categoria}
-          categoriaPadreFija={categoriaPadreFija}
-          bloquearCategoriaPadre={bloquearCategoriaPadre}
-          categoriasDisponibles={categoriasDisponibles}
+        <FormularioDocumentoAdministracion
+          documento={documento}
           estaEnviando={estaEnviando}
           mensajeError={mensajeError}
           onGuardar={onGuardar}

@@ -27,7 +27,6 @@ function formatearDocumento(documento) {
     tipoArchivo: datos.tipoArchivo,
     tipoMime: datos.tipoMime,
     nombreOriginal: datos.nombreOriginal,
-    nombreAlmacenado: datos.nombreAlmacenado,
     urlPublica: datos.urlPublica,
     tamanoBytes: datos.tamanoBytes,
     fechaPublicacion: datos.fechaPublicacion,

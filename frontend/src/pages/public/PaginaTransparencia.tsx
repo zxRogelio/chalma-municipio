@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { IconoPortal } from '../../components/common/IconoPortal'
 import { InternalHero } from '../../components/common/InternalHero'
 import { IconoTransparencia } from '../../components/transparencia/IconoTransparencia'
 import { transparencyNavigation } from '../../data/navigation'
@@ -61,6 +62,7 @@ export function PaginaTransparencia() {
               target="_blank"
               rel="noopener noreferrer"
             >
+              <IconoPortal tipo="externo" className="button-icon" />
               Abrir plataforma
             </a>
           </div>

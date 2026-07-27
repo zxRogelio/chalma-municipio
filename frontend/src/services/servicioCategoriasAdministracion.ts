@@ -8,6 +8,7 @@ import type {
 
 function construirParametros(filtros: FiltrosCategoriasAdministracion) {
   return {
+    soloRaices: filtros.soloRaices || undefined,
     tipoSeccion: filtros.tipoSeccion || undefined,
     estaActivo:
       filtros.estaActivo && filtros.estaActivo !== 'todos'
@@ -37,6 +38,41 @@ export async function obtenerCategoriaAdministracion(id: number) {
   )
 
   return respuesta.data
+}
+
+export async function listarSeccionesPrincipales() {
+  const respuesta = await api.get<RespuestaCategoriasAdministracion>(
+    '/administracion/transparencia/secciones',
+  )
+
+  return respuesta.data
+}
+
+export async function listarSubcategoriasPorPadre(id: number) {
+  const respuesta = await api.get<RespuestaCategoriasAdministracion>(
+    `/administracion/transparencia/categorias/${id}/subcategorias`,
+  )
+
+  return respuesta.data
+}
+
+export async function crearSeccionAdministracion(
+  datos: DatosCategoriaAdministracion,
+) {
+  return crearCategoriaAdministracion({
+    ...datos,
+    categoriaPadreId: null,
+  })
+}
+
+export async function crearSubcategoriaAdministracion(
+  categoriaPadreId: number,
+  datos: DatosCategoriaAdministracion,
+) {
+  return crearCategoriaAdministracion({
+    ...datos,
+    categoriaPadreId,
+  })
 }
 
 export async function crearCategoriaAdministracion(

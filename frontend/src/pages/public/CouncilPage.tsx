@@ -1,3 +1,4 @@
+import { IconoPortal } from '../../components/common/IconoPortal'
 import { InternalHero } from '../../components/common/InternalHero'
 import { councilMembers } from '../../data/siteContent'
 import { usePageTitle } from '../../hooks/usePageTitle'
@@ -16,6 +17,9 @@ export function CouncilPage() {
       <section className="section">
         <div className="container">
           <div className="section-heading">
+            <div className="section-heading-icon-wrap">
+              <IconoPortal tipo="gobierno" className="portal-heading-icon" />
+            </div>
             <p className="eyebrow">Gobierno municipal</p>
             <h2>Integrantes del Cabildo</h2>
             <p>Las tarjetas estan listas para agregar nombres, cargos y fotografias.</p>
@@ -23,7 +27,10 @@ export function CouncilPage() {
           <div className="people-grid">
             {councilMembers.map((member, index) => (
               <article className="person-card" key={`${member.role}-${index}`}>
-                <div className="person-photo">Foto</div>
+                <div className="person-photo">
+                  <IconoPortal tipo="gobierno" className="person-photo-icon" />
+                  <span>Foto</span>
+                </div>
                 <h3>{member.name}</h3>
                 <p>{member.role}</p>
               </article>

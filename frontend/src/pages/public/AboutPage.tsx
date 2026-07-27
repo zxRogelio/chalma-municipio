@@ -1,3 +1,4 @@
+import { IconoPortal } from '../../components/common/IconoPortal'
 import { InternalHero } from '../../components/common/InternalHero'
 import { usePageTitle } from '../../hooks/usePageTitle'
 
@@ -15,8 +16,13 @@ export function AboutPage() {
       <section className="section">
         <div className="container content-grid">
           <article className="content-card content-card--large">
-            <p className="eyebrow">Municipio</p>
-            <h2>Acerca del Ayuntamiento</h2>
+            <div className="heading-with-icon">
+              <IconoPortal tipo="informacion" className="portal-heading-icon" />
+              <div>
+                <p className="eyebrow">Municipio</p>
+                <h2>Acerca del Ayuntamiento</h2>
+              </div>
+            </div>
             <p>
               En este espacio se colocara la presentacion institucional,
               historia, mision, vision y objetivos del Gobierno Municipal de
@@ -28,7 +34,10 @@ export function AboutPage() {
             </p>
           </article>
           <aside className="highlight-card">
-            <h2>Datos rapidos</h2>
+            <div className="heading-with-icon heading-with-icon--dark">
+              <IconoPortal tipo="ubicacion" className="portal-heading-icon" />
+              <h2>Datos rapidos</h2>
+            </div>
             <dl>
               <div>
                 <dt>Municipio</dt>

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { searchPages } from '../../data/searchPages'
+import { IconoPortal } from './IconoPortal'
 
 interface SearchOverlayProps {
   isOpen: boolean
@@ -75,7 +76,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
         aria-label="Cerrar buscador"
         onClick={onClose}
       >
-        x
+        <IconoPortal tipo="cerrar" className="search-close-icon" />
       </button>
       <div className="search-panel" role="dialog" aria-modal="true">
         <p className="eyebrow">Buscador del sitio</p>
@@ -93,6 +94,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
             onChange={(event) => setQuery(event.target.value)}
           />
           <button className="button button--primary" type="submit">
+            <IconoPortal tipo="buscar" className="button-icon" />
             Buscar
           </button>
         </form>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { IconoPortal } from '../../components/common/IconoPortal'
 import { InternalHero } from '../../components/common/InternalHero'
 import { IconoTransparencia } from '../../components/transparencia/IconoTransparencia'
 import { TablaDocumentosTransparencia } from '../../components/transparencia/TablaDocumentosTransparencia'
@@ -123,6 +124,7 @@ export function PaginaDetalleObligacionComun() {
                 type="button"
                 onClick={() => establecerIntento((valor) => valor + 1)}
               >
+                <IconoPortal tipo="reintentar" className="button-icon" />
                 Reintentar
               </button>
             </div>
@@ -160,6 +162,7 @@ export function PaginaDetalleObligacionComun() {
                 className="button button--primary"
                 to="/transparencia/obligaciones-comunes"
               >
+                <IconoPortal tipo="volver" className="button-icon" />
                 Volver al explorador
               </Link>
             </div>

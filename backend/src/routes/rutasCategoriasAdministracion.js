@@ -4,12 +4,14 @@ import {
   cambiarEstadoCategoria,
   crearCategoria,
   listarCategorias,
+  listarSubcategorias,
   obtenerCategoria,
 } from "../controllers/controladorCategoriasAdministracion.js";
 
 const rutasCategoriasAdministracion = Router();
 
 rutasCategoriasAdministracion.get("/", listarCategorias);
+rutasCategoriasAdministracion.get("/:id/subcategorias", listarSubcategorias);
 rutasCategoriasAdministracion.get("/:id", obtenerCategoria);
 rutasCategoriasAdministracion.post("/", crearCategoria);
 rutasCategoriasAdministracion.put("/:id", actualizarCategoria);

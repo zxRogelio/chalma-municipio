@@ -1,23 +1,34 @@
 import { useEffect, useState } from 'react'
+import { IconoPortal } from '../common/IconoPortal'
+import api from '../../services/api'
 import type { DocumentoTransparencia } from '../../types/transparencia'
 
 interface PropiedadesAccionesDocumento {
   documento: DocumentoTransparencia
 }
 
-const tiposVisualizables = new Set(['PDF', 'PNG', 'JPG', 'JPEG'])
+function obtenerBasePublicaApi() {
+  const urlConfigurada = import.meta.env.VITE_URL_PUBLICA_API?.trim()
 
-function obtenerUrlAbsoluta(url: string) {
-  return new URL(url, window.location.origin).toString()
+  if (urlConfigurada) {
+    return urlConfigurada.replace(/\/$/, '')
+  }
+
+  return new URL(
+    api.defaults.baseURL ?? window.location.origin,
+    window.location.origin,
+  ).origin.replace(/\/$/, '')
+}
+
+function obtenerUrlDescarga(id: number) {
+  return `${obtenerBasePublicaApi()}/api/transparencia/documentos/${id}/archivo?modo=descargar`
 }
 
 export function AccionesDocumento({
   documento,
 }: PropiedadesAccionesDocumento) {
   const [mensaje, establecerMensaje] = useState('')
-  const urlPublica = documento.urlPublica
-  const tipoArchivo = documento.tipoArchivo.toUpperCase()
-  const puedeVisualizar = Boolean(urlPublica) && tiposVisualizables.has(tipoArchivo)
+  const urlDescarga = obtenerUrlDescarga(documento.id)
   const etiquetaAccion = `${documento.titulo} (${documento.tipoArchivo})`
 
   useEffect(() => {
@@ -34,20 +45,12 @@ export function AccionesDocumento({
   }, [mensaje])
 
   const copiarEnlace = async () => {
-    if (!urlPublica) {
-      return
-    }
-
     try {
-      await navigator.clipboard.writeText(obtenerUrlAbsoluta(urlPublica))
+      await navigator.clipboard.writeText(urlDescarga)
       establecerMensaje('Enlace copiado')
     } catch {
       establecerMensaje('No se pudo copiar')
     }
-  }
-
-  if (!urlPublica) {
-    return <span className="document-actions-empty">Sin archivo disponible</span>
   }
 
   return (
@@ -58,34 +61,16 @@ export function AccionesDocumento({
         aria-label={`Copiar enlace de ${etiquetaAccion}`}
         onClick={copiarEnlace}
       >
+        <IconoPortal tipo="copiar" className="document-action-icon" />
         Copiar
       </button>
-      {puedeVisualizar ? (
-        <a
-          className="document-action"
-          href={urlPublica}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={`Visualizar ${etiquetaAccion}`}
-        >
-          Ver
-        </a>
-      ) : (
-        <button
-          type="button"
-          className="document-action"
-          disabled
-          aria-label={`Visualizacion no disponible para ${etiquetaAccion}`}
-        >
-          Ver
-        </button>
-      )}
       <a
         className="document-action document-action--download"
-        href={urlPublica}
+        href={urlDescarga}
         download={documento.nombreOriginal ?? ''}
         aria-label={`Descargar ${etiquetaAccion}`}
       >
+        <IconoPortal tipo="descargar" className="document-action-icon" />
         Descargar
       </a>
       <span className="document-action-feedback" aria-live="polite">

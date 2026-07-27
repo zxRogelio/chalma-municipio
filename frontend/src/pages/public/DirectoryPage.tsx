@@ -1,3 +1,4 @@
+import { IconoPortal } from '../../components/common/IconoPortal'
 import { InternalHero } from '../../components/common/InternalHero'
 import { directoryEntries } from '../../data/siteContent'
 import { usePageTitle } from '../../hooks/usePageTitle'
@@ -16,9 +17,12 @@ export function DirectoryPage() {
       <section className="section">
         <div className="container">
           <div className="section-heading section-heading--split">
-            <div>
-              <p className="eyebrow">Contacto institucional</p>
-              <h2>Directorio municipal</h2>
+            <div className="heading-with-icon">
+              <IconoPortal tipo="directorio" className="portal-heading-icon" />
+              <div>
+                <p className="eyebrow">Contacto institucional</p>
+                <h2>Directorio municipal</h2>
+              </div>
             </div>
             <p className="muted-note">Datos provisionales</p>
           </div>
@@ -26,10 +30,19 @@ export function DirectoryPage() {
             <table className="directory-table">
               <thead>
                 <tr>
-                  <th>Area</th>
+                  <th>
+                    <IconoPortal tipo="area" className="table-heading-icon" />
+                    Area
+                  </th>
                   <th>Titular</th>
-                  <th>Telefono</th>
-                  <th>Correo</th>
+                  <th>
+                    <IconoPortal tipo="telefono" className="table-heading-icon" />
+                    Telefono
+                  </th>
+                  <th>
+                    <IconoPortal tipo="correo" className="table-heading-icon" />
+                    Correo
+                  </th>
                 </tr>
               </thead>
               <tbody>

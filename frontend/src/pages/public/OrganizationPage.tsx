@@ -1,3 +1,4 @@
+import { IconoPortal } from '../../components/common/IconoPortal'
 import { InternalHero } from '../../components/common/InternalHero'
 import { usePageTitle } from '../../hooks/usePageTitle'
 
@@ -15,6 +16,7 @@ export function OrganizationPage() {
       <section className="section">
         <div className="container">
           <div className="document-feature">
+            <IconoPortal tipo="organigrama" className="portal-feature-icon" />
             <div>
               <p className="eyebrow">Estructura municipal</p>
               <h2>Organigrama oficial</h2>
@@ -24,6 +26,7 @@ export function OrganizationPage() {
               </p>
             </div>
             <button className="button button--primary" type="button" disabled>
+              <IconoPortal tipo="documento" className="button-icon" />
               Documento pendiente
             </button>
           </div>

@@ -7,6 +7,49 @@ import type {
   TransparencySection,
 } from '../types/site'
 
+export type RedSocialSitioTipo = 'facebook' | 'instagram' | 'x' | 'youtube'
+
+export interface RedSocialSitio {
+  tipo: RedSocialSitioTipo
+  nombre: string
+  url: string
+  ariaLabel: string
+}
+
+export const contactInformation = {
+  intro:
+    'Puedes comunicarte con el H. Ayuntamiento de Chalma mediante los siguientes medios o acudir directamente al Palacio Municipal.',
+  provisionalNote:
+    'Datos provisionales sujetos a sustitución por información oficial.',
+  phone: {
+    label: 'Teléfono',
+    value: '000 000 00 00',
+    href: 'tel:+520000000000',
+  },
+  email: {
+    label: 'Correo electrónico',
+    value: 'contacto@chalma.gob.mx',
+    href: 'mailto:contacto@chalma.gob.mx',
+  },
+  address: {
+    label: 'Dirección',
+    value: 'Palacio Municipal de Chalma, Veracruz',
+    href:
+      'https://www.google.com/maps/search/?api=1&query=Palacio%20Municipal%20de%20Chalma%2C%20Veracruz',
+  },
+  schedule: {
+    label: 'Horario de atención',
+    value: 'Lunes a viernes de 08:00 a 15:00 horas',
+  },
+  map: {
+    title: 'Ubicación del Palacio Municipal',
+    iframeTitle: 'Ubicación del H. Ayuntamiento de Chalma',
+    embedUrl:
+      'https://www.google.com/maps?q=Palacio%20Municipal%20de%20Chalma%2C%20Veracruz&output=embed',
+  },
+  socialLinks: [] as RedSocialSitio[],
+}
+
 const provisionalDocuments: DocumentItem[] = [
   {
     type: 'PDF',
