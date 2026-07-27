@@ -6,6 +6,7 @@ const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
 export const api = axios.create({
   baseURL,
   timeout: 10000,
+  withCredentials: true,
   headers: {
     Accept: 'application/json',
     'Content-Type': 'application/json',
@@ -21,6 +22,10 @@ export function solicitudFueCancelada(error: unknown) {
 
 export function esErrorNoEncontrado(error: unknown) {
   return axios.isAxiosError(error) && error.response?.status === 404
+}
+
+export function esErrorNoAutorizado(error: unknown) {
+  return axios.isAxiosError(error) && error.response?.status === 401
 }
 
 export function obtenerMensajeErrorApi(error: unknown) {

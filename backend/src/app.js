@@ -3,6 +3,9 @@ import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import rutasTransparenciaPublica from "./routes/rutasTransparenciaPublica.js";
+import rutasAutenticacion from "./routes/rutasAutenticacion.js";
+import rutasAdministracion from "./routes/rutasAdministracion.js";
+import { requerirAdministrador } from "./middleware/requerirAdministrador.js";
 import { comprobarConexionBaseDatos } from "./config/baseDatos.js";
 
 const app = express();
@@ -40,6 +43,12 @@ app.get("/api/health", async (_solicitud, respuesta) => {
 });
 
 app.use("/api/transparencia", rutasTransparenciaPublica);
+app.use("/api/autenticacion", rutasAutenticacion);
+app.use(
+  "/api/administracion",
+  requerirAdministrador,
+  rutasAdministracion
+);
 
 app.use((solicitud, respuesta) => {
   if (solicitud.originalUrl.startsWith("/api/transparencia")) {

@@ -1345,7 +1345,7 @@ button:disabled {
 }
 
 .admin-panel {
-  width: min(460px, 100%);
+  width: min(520px, 100%);
   padding: 32px;
   background: #ffffff;
   border: 1px solid var(--line);
@@ -1386,13 +1386,83 @@ button:disabled {
   border-radius: var(--radius);
 }
 
-.login-form button {
+.password-field {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+
+.password-field input {
+  min-width: 0;
+}
+
+.password-field button {
+  min-height: auto;
+  padding: 0 12px;
+  color: var(--wine);
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.admin-error {
+  min-height: 22px;
+  color: var(--wine);
+  font-size: 14px;
+  font-weight: 750;
+}
+
+.login-form > button {
   min-height: 46px;
   color: #ffffff;
   background: var(--wine);
   border-radius: var(--radius);
   font-weight: 800;
   cursor: pointer;
+}
+
+.login-form > button:disabled {
+  opacity: 0.78;
+}
+
+.admin-session {
+  display: grid;
+  gap: 12px;
+  margin: 24px 0;
+}
+
+.admin-session div {
+  padding: 14px;
+  background: #f7f8fa;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.admin-session dt {
+  color: #7a8493;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.admin-session dd {
+  margin: 2px 0 0;
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.admin-note {
+  padding: 14px;
+  color: var(--ink);
+  background: var(--soft-wine);
+  border-radius: var(--radius);
+  font-weight: 750;
+}
+
+.admin-status {
+  margin-top: 14px;
+  color: #7a8493;
+  font-size: 14px;
 }
 
 .admin-actions {
@@ -1774,6 +1844,8 @@ body.high-contrast .person-card,
 body.high-contrast .table-wrap,
 body.high-contrast .project-grid article,
 body.high-contrast .admin-panel,
+body.high-contrast .admin-session div,
+body.high-contrast .admin-note,
 body.high-contrast .value-grid article {
   color: #ffffff;
   background: #070707;

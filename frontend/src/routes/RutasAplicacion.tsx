@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { RutaAdministrador } from '../components/admin/RutaAdministrador'
 import { PublicLayout } from '../layouts/PublicLayout'
 import { AdminDashboardPage } from '../pages/admin/AdminDashboardPage'
 import { AdminLoginPage } from '../pages/admin/AdminLoginPage'
@@ -23,7 +24,9 @@ export function RutasAplicacion() {
     <BrowserRouter>
       <Routes>
         <Route path="/admin/login" element={<AdminLoginPage />} />
-        <Route path="/admin" element={<AdminDashboardPage />} />
+        <Route element={<RutaAdministrador />}>
+          <Route path="/admin" element={<AdminDashboardPage />} />
+        </Route>
 
         <Route element={<PublicLayout />}>
           <Route path="/" element={<HomePage />} />
