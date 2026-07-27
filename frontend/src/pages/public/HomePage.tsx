@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { IconoTransparencia } from '../../components/transparencia/IconoTransparencia'
 import { quickAccess, transparencyShortcuts } from '../../data/navigation'
 import { usePageTitle } from '../../hooks/usePageTitle'
 
@@ -11,8 +12,8 @@ export function HomePage() {
         <div className="hero-content container">
           <img
             className="hero-logo"
-            src="/assets/img/logo.svg"
-            alt="H. Ayuntamiento de Chalma"
+            src="/assets/img/logo-chalma-oficial.png"
+            alt="Logo oficial del H. Ayuntamiento de Chalma"
           />
           <p className="hero-kicker">Gobierno municipal</p>
           <h1>Chalma, Veracruz</h1>
@@ -69,7 +70,13 @@ export function HomePage() {
           <div className="document-shortcuts">
             {transparencyShortcuts.map((item) => (
               <Link to={item.to} key={item.to}>
-                {item.label}
+                <span>
+                  <IconoTransparencia
+                    tipo={item.icono}
+                    className="document-shortcut-icon"
+                  />
+                  {item.label}
+                </span>
                 <span aria-hidden="true">→</span>
               </Link>
             ))}

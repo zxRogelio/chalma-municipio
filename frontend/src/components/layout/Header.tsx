@@ -5,6 +5,7 @@ import {
   transparencyNavigation,
 } from '../../data/navigation'
 import type { NavGroupKey, NavItem } from '../../types/site'
+import { IconoTransparencia } from '../transparencia/IconoTransparencia'
 
 interface HeaderProps {
   onSearchOpen: () => void
@@ -107,7 +108,11 @@ export function Header({ onSearchOpen, onContrastChange }: HeaderProps) {
                 rel="noopener noreferrer"
                 onClick={closeNavigation}
               >
-                <span className="dropdown-icon" aria-hidden="true" />
+                {key === 'transparency' ? (
+                  <IconoTransparencia tipo={item.icono} className="dropdown-icon" />
+                ) : (
+                  <span className="dropdown-icon dropdown-icon--fallback" aria-hidden="true" />
+                )}
                 <span>{item.label}</span>
               </a>
             ) : (
@@ -117,7 +122,11 @@ export function Header({ onSearchOpen, onContrastChange }: HeaderProps) {
                 to={item.to}
                 onClick={closeNavigation}
               >
-                <span className="dropdown-icon" aria-hidden="true" />
+                {key === 'transparency' ? (
+                  <IconoTransparencia tipo={item.icono} className="dropdown-icon" />
+                ) : (
+                  <span className="dropdown-icon dropdown-icon--fallback" aria-hidden="true" />
+                )}
                 <span>{item.label}</span>
               </NavLink>
             ),
@@ -135,7 +144,10 @@ export function Header({ onSearchOpen, onContrastChange }: HeaderProps) {
     >
       <div className="header-inner">
         <Link className="brand" to="/" aria-label="Ir al inicio" onClick={closeNavigation}>
-          <img src="/assets/img/logo.svg" alt="H. Ayuntamiento de Chalma" />
+          <img
+            src="/assets/img/logo-chalma-oficial.png"
+            alt="Logo oficial del H. Ayuntamiento de Chalma"
+          />
         </Link>
 
         <button

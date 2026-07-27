@@ -1,11 +1,21 @@
 import { DocumentList } from '../../components/common/DocumentList'
 import { InternalHero } from '../../components/common/InternalHero'
+import { IconoTransparencia } from '../../components/transparencia/IconoTransparencia'
 import { projectCards } from '../../data/siteContent'
 import { usePageTitle } from '../../hooks/usePageTitle'
-import type { TransparencySection } from '../../types/site'
+import type { IconoTransparenciaTipo, TransparencySection } from '../../types/site'
 
 interface PropiedadesPaginaDocumentosTransparencia {
   section: TransparencySection
+}
+
+const iconosPorRuta: Record<string, IconoTransparenciaTipo> = {
+  '/transparencia/obligaciones-especificas': 'especificas',
+  '/transparencia/obras-publicas': 'obras',
+  '/transparencia/fondos-federales': 'fondos',
+  '/transparencia/informacion-financiera': 'finanzas',
+  '/transparencia/cuenta-publica': 'cuenta',
+  '/transparencia/licitaciones': 'licitaciones',
 }
 
 export function PaginaDocumentosTransparencia({
@@ -13,6 +23,7 @@ export function PaginaDocumentosTransparencia({
 }: PropiedadesPaginaDocumentosTransparencia) {
   usePageTitle(section.title)
   const esPaginaObras = section.route.endsWith('obras-publicas')
+  const iconoSeccion = iconosPorRuta[section.route] ?? 'documentos'
 
   return (
     <main className="internal-main">
@@ -28,10 +39,16 @@ export function PaginaDocumentosTransparencia({
       <section className="section">
         <div className="container">
           <div className="section-heading section-heading--split">
-            <div>
-              <p className="eyebrow">Transparencia</p>
-              <h2>{section.title}</h2>
-              <p>{section.intro}</p>
+            <div className="transparency-heading-row">
+              <IconoTransparencia
+                tipo={iconoSeccion}
+                className="transparency-heading-icon"
+              />
+              <div>
+                <p className="eyebrow">Transparencia</p>
+                <h2>{section.title}</h2>
+                <p>{section.intro}</p>
+              </div>
             </div>
             <label className="year-filter">
               Ejercicio

@@ -9,8 +9,8 @@ export function Footer() {
         <div>
           <img
             className="footer-logo"
-            src="/assets/img/logo.svg"
-            alt="H. Ayuntamiento de Chalma"
+            src="/assets/img/logo-chalma-oficial.png"
+            alt="Logo oficial del H. Ayuntamiento de Chalma"
           />
           <p className="footer-copy">
             Sitio frontal provisional del H. Ayuntamiento de Chalma.

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { InternalHero } from '../../components/common/InternalHero'
+import { IconoTransparencia } from '../../components/transparencia/IconoTransparencia'
 import { transparencyNavigation } from '../../data/navigation'
 import { usePageTitle } from '../../hooks/usePageTitle'
 
@@ -31,9 +32,9 @@ export function PaginaTransparencia() {
           <div className="department-grid">
             {elementosTransparenciaInternos.map((elemento) => (
               <article key={elemento.to}>
-                <span
-                  className="department-icon department-icon--doc"
-                  aria-hidden="true"
+                <IconoTransparencia
+                  tipo={elemento.icono}
+                  className="transparency-card-icon"
                 />
                 <h3>{elemento.label}</h3>
                 <p>{elemento.description}</p>
@@ -42,6 +43,10 @@ export function PaginaTransparencia() {
             ))}
           </div>
           <div className="external-feature">
+            <IconoTransparencia
+              tipo="plataforma"
+              className="external-feature-icon"
+            />
             <div>
               <p className="eyebrow">Consulta externa</p>
               <h2>Plataforma Nacional de Transparencia</h2>

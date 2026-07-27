@@ -1,10 +1,22 @@
 export type NavGroupKey = 'government' | 'transparency'
 
+export type IconoTransparenciaTipo =
+  | 'plataforma'
+  | 'obligaciones'
+  | 'especificas'
+  | 'obras'
+  | 'fondos'
+  | 'finanzas'
+  | 'cuenta'
+  | 'licitaciones'
+  | 'documentos'
+
 export interface NavItem {
   label: string
   to: string
   description?: string
   external?: boolean
+  icono?: IconoTransparenciaTipo
 }
 
 export interface QuickAccessItem {
