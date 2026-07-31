@@ -1119,6 +1119,41 @@ a.contacto-publico__dato:focus-visible {
   max-width: 360px;
 }
 
+.footer-social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.footer-social-link {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--radius);
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.footer-social-link:hover,
+.footer-social-link:focus-visible {
+  background: var(--color-naranja-institucional);
+  border-color: var(--color-naranja-institucional);
+  transform: translateY(-2px);
+}
+
+.footer-social-link svg {
+  width: 21px;
+  height: 21px;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .footer-grid p,
 .footer-grid small {
   margin: 0;

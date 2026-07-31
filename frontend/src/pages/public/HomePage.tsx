@@ -2,11 +2,27 @@ import { Link } from 'react-router-dom'
 import { IconoPortal } from '../../components/common/IconoPortal'
 import { IconoTransparencia } from '../../components/transparencia/IconoTransparencia'
 import { configuracionPortal } from '../../config/configuracionPortal'
+import { usarContacto } from '../../context/ContextoContacto'
 import { quickAccess, transparencyShortcuts } from '../../data/navigation'
 import { usePageTitle } from '../../hooks/usePageTitle'
 
+function construirEnlaceTelefono(telefono: string) {
+  return `tel:${telefono.replace(/[^\d+]/g, '')}`
+}
+
 export function HomePage() {
+  const { configuracion, estaCargando, mensajeError } = usarContacto()
   usePageTitle('Inicio')
+
+  const telefonoVisible =
+    configuracion.mostrarTelefono && configuracion.telefono
+      ? configuracion.telefono
+      : null
+  const correoVisible =
+    configuracion.mostrarCorreo && configuracion.correo
+      ? configuracion.correo
+      : null
+  const tieneContactoVisible = Boolean(telefonoVisible || correoVisible)
 
   return (
     <main>
@@ -96,32 +112,53 @@ export function HomePage() {
             <p className="eyebrow">Atencion ciudadana</p>
             <h2>Contacto</h2>
             <p>
-              Los siguientes datos son provisionales. Mas adelante se sustituyen
-              por la informacion oficial.
+              Consulta los medios de contacto oficiales disponibles para
+              atencion ciudadana.
             </p>
           </div>
-          <div className="contact-list">
-            <a href="tel:0000000000">
-              <span className="contact-icon" aria-hidden="true">
-                <IconoPortal tipo="telefono" />
-              </span>
-              <strong>Telefono</strong>
-              <small>000 000 00 00</small>
-            </a>
-            <a href="mailto:contacto@chalma.gob.mx">
-              <span className="contact-icon" aria-hidden="true">
-                <IconoPortal tipo="correo" />
-              </span>
-              <strong>Correo</strong>
-              <small>contacto@chalma.gob.mx</small>
-            </a>
-            <div>
-              <span className="contact-icon" aria-hidden="true">
-                <IconoPortal tipo="ubicacion" />
-              </span>
-              <strong>Direccion</strong>
-              <small>Palacio Municipal de Chalma, Veracruz</small>
-            </div>
+          <div className="contact-list" aria-label="Medios de contacto">
+            {estaCargando ? (
+              <div aria-live="polite">
+                <span className="contact-icon" aria-hidden="true">
+                  <IconoPortal tipo="contacto" />
+                </span>
+                <strong>Contacto</strong>
+                <small>Cargando informacion de contacto.</small>
+              </div>
+            ) : null}
+
+            {!estaCargando && (mensajeError || !tieneContactoVisible) ? (
+              <div>
+                <span className="contact-icon" aria-hidden="true">
+                  <IconoPortal tipo="contacto" />
+                </span>
+                <strong>Contacto</strong>
+                <small>
+                  La informaci&oacute;n de contacto no est&aacute; disponible
+                  temporalmente.
+                </small>
+              </div>
+            ) : null}
+
+            {!estaCargando && !mensajeError && telefonoVisible ? (
+              <a href={construirEnlaceTelefono(telefonoVisible)}>
+                <span className="contact-icon" aria-hidden="true">
+                  <IconoPortal tipo="telefono" />
+                </span>
+                <strong>Telefono</strong>
+                <small>{telefonoVisible}</small>
+              </a>
+            ) : null}
+
+            {!estaCargando && !mensajeError && correoVisible ? (
+              <a href={`mailto:${correoVisible}`}>
+                <span className="contact-icon" aria-hidden="true">
+                  <IconoPortal tipo="correo" />
+                </span>
+                <strong>Correo</strong>
+                <small>{correoVisible}</small>
+              </a>
+            ) : null}
           </div>
         </div>
       </section>

@@ -1,7 +1,22 @@
 import { Link } from 'react-router-dom'
 import { configuracionPortal } from '../../config/configuracionPortal'
 import { usarContacto } from '../../context/ContextoContacto'
+import type { IconoPortalTipo } from '../../types/site'
 import { IconoPortal } from '../common/IconoPortal'
+
+interface RedSocialFooter {
+  nombre: string
+  tipo: IconoPortalTipo
+  url: string
+}
+
+const redesSocialesFooter: RedSocialFooter[] = [
+  // Reemplaza "#" por la URL oficial de cada red social.
+  { nombre: 'Facebook', tipo: 'facebook', url: 'https://www.facebook.com/PresidenciaMunicipaldeChalma/' },
+  { nombre: 'Instagram', tipo: 'instagram', url: '#' },
+  { nombre: 'X', tipo: 'x', url: '#' },
+  { nombre: 'YouTube', tipo: 'youtube', url: '#' },
+]
 
 function construirEnlaceTelefono(telefono: string) {
   return `tel:${telefono.replace(/[^\d+]/g, '')}`
@@ -25,8 +40,32 @@ export function Footer() {
       <div className="footer-grid container">
         <div>
           <p className="footer-copy">
-            Sitio frontal provisional del H. Ayuntamiento de Chalma.
+            Portal oficial del H. Ayuntamiento de Chalma, Veracruz.
           </p>
+          <div className="footer-social" aria-label="Redes sociales oficiales">
+            {redesSocialesFooter.map((redSocial) => {
+              const urlPendiente = redSocial.url === '#'
+
+              return (
+                <a
+                  className="footer-social-link"
+                  href={redSocial.url}
+                  key={redSocial.nombre}
+                  target={urlPendiente ? undefined : '_blank'}
+                  rel={urlPendiente ? undefined : 'noopener noreferrer'}
+                  aria-label={redSocial.nombre}
+                  title={redSocial.nombre}
+                  onClick={
+                    urlPendiente
+                      ? (evento) => evento.preventDefault()
+                      : undefined
+                  }
+                >
+                  <IconoPortal tipo={redSocial.tipo} />
+                </a>
+              )
+            })}
+          </div>
         </div>
         <div>
           <h2 className="footer-title">Enlaces</h2>
