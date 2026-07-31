@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { configuracionPortal } from '../../config/configuracionPortal'
 import { usarContacto } from '../../context/ContextoContacto'
 import { IconoPortal } from '../common/IconoPortal'
 
@@ -37,10 +38,12 @@ export function Footer() {
             <IconoPortal tipo="transparencia" className="footer-icon" />
             Transparencia
           </Link>
-          <Link className="footer-link" to="/tramites-servicios">
-            <IconoPortal tipo="tramites" className="footer-icon" />
-            Tramites y servicios
-          </Link>
+          {configuracionPortal.mostrarTramitesServicios ? (
+            <Link className="footer-link" to="/tramites-servicios">
+              <IconoPortal tipo="tramites" className="footer-icon" />
+              Tramites y servicios
+            </Link>
+          ) : null}
           <Link className="footer-link" to="/contacto">
             <IconoPortal tipo="contacto" className="footer-icon" />
             Contacto

@@ -1972,6 +1972,10 @@ a.contacto-publico__dato:focus-visible {
   margin: 24px 0;
 }
 
+.admin-session--compact {
+  margin: 18px 0 0;
+}
+
 .admin-session div {
   padding: 14px;
   background: #f7f8fa;
@@ -2370,6 +2374,13 @@ a.contacto-publico__dato:focus-visible {
   align-items: start;
 }
 
+.admin-account-grid {
+  display: grid;
+  grid-template-columns: minmax(300px, 0.85fr) minmax(360px, 1.15fr);
+  gap: 18px;
+  align-items: start;
+}
+
 .admin-organigrama-panel {
   display: grid;
   gap: 16px;
@@ -2434,6 +2445,29 @@ a.contacto-publico__dato:focus-visible {
   gap: 7px;
   color: var(--ink);
   font-weight: 800;
+}
+
+.admin-password-rules {
+  padding: 14px;
+  color: #5d6675;
+  background: #f7f8fa;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.admin-password-rules strong {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--ink);
+}
+
+.admin-password-rules ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.admin-password-rules li + li {
+  margin-top: 4px;
 }
 
 .admin-category-form input[type='file'] {
@@ -3222,7 +3256,8 @@ body.high-contrast .hero-logo {
 
   .admin-section-grid,
   .admin-detail-grid,
-  .admin-organigrama-grid {
+  .admin-organigrama-grid,
+  .admin-account-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -3252,7 +3287,8 @@ body.high-contrast .hero-logo {
   }
 
   .directorio-publico-grid,
-  .admin-organigrama-grid {
+  .admin-organigrama-grid,
+  .admin-account-grid {
     grid-template-columns: 1fr;
   }
 
@@ -3373,7 +3409,8 @@ body.high-contrast .hero-logo {
   .admin-section-grid,
   .admin-detail-grid,
   .directorio-publico-grid,
-  .admin-organigrama-grid {
+  .admin-organigrama-grid,
+  .admin-account-grid {
     grid-template-columns: 1fr;
   }
 

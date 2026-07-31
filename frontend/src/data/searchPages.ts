@@ -1,6 +1,7 @@
 import type { SearchPage } from '../types/site'
+import { configuracionPortal } from '../config/configuracionPortal'
 
-export const searchPages: SearchPage[] = [
+const paginasBusquedaBase: SearchPage[] = [
   {
     title: 'Inicio',
     description: 'Portada, accesos rapidos, transparencia y contacto.',
@@ -116,3 +117,10 @@ export const searchPages: SearchPage[] = [
     keywords: ['telefono', 'correo', 'direccion', 'contacto'],
   },
 ]
+
+export const searchPages: SearchPage[] =
+  configuracionPortal.mostrarTramitesServicios
+    ? paginasBusquedaBase
+    : paginasBusquedaBase.filter(
+        (pagina) => pagina.path !== '/tramites-servicios',
+      )

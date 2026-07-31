@@ -48,6 +48,12 @@ export function definirUsuarioAdministrador(baseDatos) {
         defaultValue: true,
         field: "esta_activo",
       },
+      versionSesion: {
+        type: DataTypes.INTEGER.UNSIGNED,
+        allowNull: false,
+        defaultValue: 0,
+        field: "version_sesion",
+      },
       ultimoAcceso: {
         type: DataTypes.DATE,
         allowNull: true,
@@ -65,6 +71,7 @@ export function definirUsuarioAdministrador(baseDatos) {
   UsuarioAdministrador.prototype.toJSON = function toJSON() {
     const valores = { ...this.get() };
     delete valores.contrasenaHash;
+    delete valores.versionSesion;
     return valores;
   };
 

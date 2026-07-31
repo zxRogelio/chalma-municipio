@@ -4,9 +4,11 @@ import type { Location } from 'react-router-dom'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { usarAutenticacion } from '../../context/ContextoAutenticacion'
 import { usePageTitle } from '../../hooks/usePageTitle'
+import type { EstadoLoginAdministracion } from '../../types/cuentaAdministracion'
 
 interface EstadoRutaAdministrador {
   from?: Location
+  mensaje?: string
 }
 
 export function AdminLoginPage() {
@@ -17,7 +19,9 @@ export function AdminLoginPage() {
   } = usarAutenticacion()
   const ubicacion = useLocation()
   const navegar = useNavigate()
-  const estadoRuta = ubicacion.state as EstadoRutaAdministrador | null
+  const estadoRuta = ubicacion.state as
+    | (EstadoRutaAdministrador & EstadoLoginAdministracion)
+    | null
   const rutaOrigen = estadoRuta?.from
   const destino =
     rutaOrigen && rutaOrigen.pathname !== '/admin/login'
@@ -28,6 +32,7 @@ export function AdminLoginPage() {
   const [mostrarContrasena, establecerMostrarContrasena] = useState(false)
   const [estaEnviando, establecerEstaEnviando] = useState(false)
   const [mensajeError, establecerMensajeError] = useState('')
+  const mensajeInformativo = estadoRuta?.mensaje ?? ''
 
   usePageTitle('Inicio de sesion administrativo')
 
@@ -70,6 +75,11 @@ export function AdminLoginPage() {
       <section className="admin-panel">
         <p className="eyebrow">Administracion</p>
         <h1>Inicio de sesion administrativo</h1>
+        {mensajeInformativo ? (
+          <p className="admin-note" role="status">
+            {mensajeInformativo}
+          </p>
+        ) : null}
         <form className="login-form" onSubmit={enviarFormulario}>
           <label htmlFor="nombreUsuario">
             Usuario

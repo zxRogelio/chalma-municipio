@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { IconoPortal } from '../../components/common/IconoPortal'
 import { IconoTransparencia } from '../../components/transparencia/IconoTransparencia'
+import { configuracionPortal } from '../../config/configuracionPortal'
 import { quickAccess, transparencyShortcuts } from '../../data/navigation'
 import { usePageTitle } from '../../hooks/usePageTitle'
 
@@ -27,10 +28,12 @@ export function HomePage() {
               <IconoPortal tipo="transparencia" className="button-icon" />
               Consultar transparencia
             </Link>
-            <Link className="button button--ghost" to="/tramites-servicios">
-              <IconoPortal tipo="tramites" className="button-icon" />
-              Tramites y servicios
-            </Link>
+            {configuracionPortal.mostrarTramitesServicios ? (
+              <Link className="button button--ghost" to="/tramites-servicios">
+                <IconoPortal tipo="tramites" className="button-icon" />
+                Tramites y servicios
+              </Link>
+            ) : null}
           </div>
         </div>
         <a className="scroll-indicator" href="#accesos" aria-label="Ir a accesos rapidos">

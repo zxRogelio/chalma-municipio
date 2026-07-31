@@ -4,10 +4,18 @@ import {
 } from "../services/servicioAutenticacion.js";
 import {
   obtenerNombreCookie,
+  obtenerOpcionesParaBorrarCookie,
   verificarTokenAdministrador,
 } from "../utils/tokenAdministrador.js";
 
-function responderSesionNoValida(respuesta) {
+function responderSesionNoValida(respuesta, limpiarCookie = false) {
+  if (limpiarCookie) {
+    respuesta.clearCookie(
+      obtenerNombreCookie(),
+      obtenerOpcionesParaBorrarCookie()
+    );
+  }
+
   return respuesta.status(401).json({
     exito: false,
     mensaje: "Sesion no valida",
@@ -30,13 +38,19 @@ export async function requerirAdministrador(
     const administrador = await buscarAdministradorPorId(payload.sub);
 
     if (!administrador || !administrador.estaActivo) {
-      return responderSesionNoValida(respuesta);
+      return responderSesionNoValida(respuesta, true);
+    }
+
+    if (
+      Number(administrador.versionSesion) !== Number(payload.versionSesion)
+    ) {
+      return responderSesionNoValida(respuesta, true);
     }
 
     solicitud.administrador =
       convertirAdministradorSeguro(administrador);
     return siguiente();
   } catch {
-    return responderSesionNoValida(respuesta);
+    return responderSesionNoValida(respuesta, true);
   }
 }

@@ -6,6 +6,9 @@ export function NavegacionAdministrador() {
       <NavLink to="/admin" end>
         Resumen
       </NavLink>
+      <NavLink to="/admin/cuenta">
+        Mi cuenta
+      </NavLink>
       <NavLink to="/admin/transparencia">
         Transparencia
       </NavLink>

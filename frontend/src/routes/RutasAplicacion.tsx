@@ -5,6 +5,7 @@ import { PublicLayout } from '../layouts/PublicLayout'
 import { AdminDashboardPage } from '../pages/admin/AdminDashboardPage'
 import { AdminLoginPage } from '../pages/admin/AdminLoginPage'
 import { PaginaContactoAdministracion } from '../pages/admin/PaginaContactoAdministracion'
+import { PaginaCuentaAdministracion } from '../pages/admin/PaginaCuentaAdministracion'
 import { PaginaDetalleCategoriaAdministracion } from '../pages/admin/PaginaDetalleCategoriaAdministracion'
 import { PaginaDirectorioAdministracion } from '../pages/admin/PaginaDirectorioAdministracion'
 import { PaginaDocumentosCategoriaAdministracion } from '../pages/admin/PaginaDocumentosCategoriaAdministracion'
@@ -55,6 +56,10 @@ export function RutasAplicacion() {
             <Route
               path="contacto"
               element={<PaginaContactoAdministracion />}
+            />
+            <Route
+              path="cuenta"
+              element={<PaginaCuentaAdministracion />}
             />
             <Route
               path="directorio"

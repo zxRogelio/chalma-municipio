@@ -19,6 +19,7 @@ export function generarTokenAdministrador(administrador) {
     sub: String(administrador.id),
     rol: administrador.rol,
     tipo: "administrador",
+    versionSesion: Number(administrador.versionSesion) || 0,
   };
 
   return jwt.sign(payload, obtenerJwtSecret(), {
@@ -33,7 +34,8 @@ export function verificarTokenAdministrador(token) {
     !payload ||
     typeof payload !== "object" ||
     payload.tipo !== "administrador" ||
-    !payload.sub
+    !payload.sub ||
+    !Number.isInteger(payload.versionSesion)
   ) {
     throw new Error("Token no valido");
   }
@@ -42,6 +44,7 @@ export function verificarTokenAdministrador(token) {
     sub: String(payload.sub),
     rol: typeof payload.rol === "string" ? payload.rol : undefined,
     tipo: "administrador",
+    versionSesion: payload.versionSesion,
   };
 }
 

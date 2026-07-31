@@ -1,9 +1,39 @@
+import { Link } from 'react-router-dom'
 import { IconoPortal } from '../../components/common/IconoPortal'
 import { InternalHero } from '../../components/common/InternalHero'
+import { configuracionPortal } from '../../config/configuracionPortal'
 import { usePageTitle } from '../../hooks/usePageTitle'
 
 export function ProceduresServicesPage() {
   usePageTitle('Tramites y servicios')
+
+  if (!configuracionPortal.mostrarTramitesServicios) {
+    return (
+      <main className="internal-main">
+        <InternalHero
+          eyebrow="Atencion ciudadana"
+          title="Sección no disponible"
+          description="La sección de Trámites y servicios se encuentra temporalmente deshabilitada."
+          breadcrumbs={[{ label: 'Trámites y servicios' }]}
+        />
+        <section className="section">
+          <div className="container">
+            <div className="transparency-empty-state">
+              <h2>Sección no disponible</h2>
+              <p>
+                La sección de Trámites y servicios se encuentra temporalmente
+                deshabilitada.
+              </p>
+              <Link className="button button--primary" to="/">
+                <IconoPortal tipo="volver" className="button-icon" />
+                Volver al inicio
+              </Link>
+            </div>
+          </div>
+        </section>
+      </main>
+    )
+  }
 
   return (
     <main className="internal-main">

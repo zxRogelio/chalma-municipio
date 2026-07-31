@@ -4,6 +4,7 @@ import {
   governmentHeaderNavigation,
   transparencyNavigation,
 } from '../../data/navigation'
+import { configuracionPortal } from '../../config/configuracionPortal'
 import {
   obtenerSeccionesTransparencia,
 } from '../../services/servicioTransparencia'
@@ -332,16 +333,18 @@ export function Header({
               true,
             )}
 
-            <li>
-              <NavLink
-                className="nav-link"
-                to="/tramites-servicios"
-                onClick={closeNavigation}
-              >
-                <IconoPortal tipo="tramites" className="nav-link-icon" />
-                Trámites y servicios
-              </NavLink>
-            </li>
+            {configuracionPortal.mostrarTramitesServicios ? (
+              <li>
+                <NavLink
+                  className="nav-link"
+                  to="/tramites-servicios"
+                  onClick={closeNavigation}
+                >
+                  <IconoPortal tipo="tramites" className="nav-link-icon" />
+                  Trámites y servicios
+                </NavLink>
+              </li>
+            ) : null}
 
             <li>
               <NavLink
