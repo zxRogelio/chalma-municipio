@@ -5,6 +5,7 @@ import { Toast } from '../components/common/Toast'
 import { Footer } from '../components/layout/Footer'
 import { FranjaLogoInstitucional } from '../components/layout/FranjaLogoInstitucional'
 import { Header } from '../components/layout/Header'
+import { ProveedorContacto } from '../context/ContextoContacto'
 
 export function PublicLayout() {
   const [isSearchOpen, setIsSearchOpen] = useState(false)
@@ -18,7 +19,7 @@ export function PublicLayout() {
   }
 
   return (
-    <>
+    <ProveedorContacto>
       <Header
         onSearchOpen={() => setIsSearchOpen(true)}
         onContrastChange={(enabled) =>
@@ -30,6 +31,6 @@ export function PublicLayout() {
       <Footer />
       <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
       <Toast message={toastMessage} visible={isToastVisible} />
-    </>
+    </ProveedorContacto>
   )
 }

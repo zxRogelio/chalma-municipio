@@ -4,8 +4,11 @@ import { RutaAdministrador } from '../components/admin/RutaAdministrador'
 import { PublicLayout } from '../layouts/PublicLayout'
 import { AdminDashboardPage } from '../pages/admin/AdminDashboardPage'
 import { AdminLoginPage } from '../pages/admin/AdminLoginPage'
+import { PaginaContactoAdministracion } from '../pages/admin/PaginaContactoAdministracion'
 import { PaginaDetalleCategoriaAdministracion } from '../pages/admin/PaginaDetalleCategoriaAdministracion'
+import { PaginaDirectorioAdministracion } from '../pages/admin/PaginaDirectorioAdministracion'
 import { PaginaDocumentosCategoriaAdministracion } from '../pages/admin/PaginaDocumentosCategoriaAdministracion'
+import { PaginaOrganigramaAdministracion } from '../pages/admin/PaginaOrganigramaAdministracion'
 import { PaginaSeccionTransparenciaAdministracion } from '../pages/admin/PaginaSeccionTransparenciaAdministracion'
 import { PaginaTransparenciaAdministracion } from '../pages/admin/PaginaTransparenciaAdministracion'
 import { AboutPage } from '../pages/public/AboutPage'
@@ -17,12 +20,9 @@ import { GovernmentPage } from '../pages/public/GovernmentPage'
 import { HomePage } from '../pages/public/HomePage'
 import { NotFoundPage } from '../pages/public/NotFoundPage'
 import { OrganizationPage } from '../pages/public/OrganizationPage'
-import { PaginaDetalleObligacionComun } from '../pages/public/PaginaDetalleObligacionComun'
-import { PaginaDocumentosTransparencia } from '../pages/public/PaginaDocumentosTransparencia'
-import { PaginaObligacionesComunes } from '../pages/public/PaginaObligacionesComunes'
+import { PaginaCategoriaTransparencia } from '../pages/public/PaginaCategoriaTransparencia'
 import { PaginaTransparencia } from '../pages/public/PaginaTransparencia'
 import { ProceduresServicesPage } from '../pages/public/ProceduresServicesPage'
-import { transparencySections } from '../data/siteContent'
 
 export function RutasAplicacion() {
   return (
@@ -52,6 +52,18 @@ export function RutasAplicacion() {
               path="transparencia/categorias/:id/documentos"
               element={<PaginaDocumentosCategoriaAdministracion />}
             />
+            <Route
+              path="contacto"
+              element={<PaginaContactoAdministracion />}
+            />
+            <Route
+              path="directorio"
+              element={<PaginaDirectorioAdministracion />}
+            />
+            <Route
+              path="organigrama"
+              element={<PaginaOrganigramaAdministracion />}
+            />
           </Route>
         </Route>
 
@@ -66,35 +78,39 @@ export function RutasAplicacion() {
           <Route path="/transparencia" element={<PaginaTransparencia />} />
           <Route
             path="/transparencia/obligaciones-comunes"
-            element={<PaginaObligacionesComunes />}
+            element={<PaginaCategoriaTransparencia slugFijo="obligaciones-comunes" />}
           />
           <Route
             path="/transparencia/obligaciones-comunes/:slug"
-            element={<PaginaDetalleObligacionComun />}
+            element={<PaginaCategoriaTransparencia />}
+          />
+          <Route
+            path="/transparencia/apartado/:slug"
+            element={<PaginaCategoriaTransparencia />}
           />
           <Route
             path="/transparencia/obligaciones-especificas"
-            element={<PaginaDocumentosTransparencia section={transparencySections.specific} />}
+            element={<PaginaCategoriaTransparencia slugFijo="obligaciones-especificas" />}
           />
           <Route
             path="/transparencia/obras-publicas"
-            element={<PaginaDocumentosTransparencia section={transparencySections.works} />}
+            element={<PaginaCategoriaTransparencia slugFijo="obras-publicas" />}
           />
           <Route
             path="/transparencia/fondos-federales"
-            element={<PaginaDocumentosTransparencia section={transparencySections.funds} />}
+            element={<PaginaCategoriaTransparencia slugFijo="fondos-federales" />}
           />
           <Route
             path="/transparencia/informacion-financiera"
-            element={<PaginaDocumentosTransparencia section={transparencySections.finance} />}
+            element={<PaginaCategoriaTransparencia slugFijo="informacion-financiera" />}
           />
           <Route
             path="/transparencia/cuenta-publica"
-            element={<PaginaDocumentosTransparencia section={transparencySections.account} />}
+            element={<PaginaCategoriaTransparencia slugFijo="cuenta-publica" />}
           />
           <Route
             path="/transparencia/licitaciones"
-            element={<PaginaDocumentosTransparencia section={transparencySections.bids} />}
+            element={<PaginaCategoriaTransparencia slugFijo="licitaciones" />}
           />
           <Route
             path="/tramites-servicios"

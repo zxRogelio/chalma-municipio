@@ -83,13 +83,10 @@ export const etiquetasTipoSeccion: Record<TipoSeccionTransparencia, string> = {
 }
 
 export function puedeCrearSubcategorias(
-  categoria: Pick<
+  _categoria: Pick<
     CategoriaAdministracion,
     'tipoSeccion' | 'categoriaPadreId'
   >,
 ) {
-  return !(
-    categoria.tipoSeccion === 'obligaciones_comunes' &&
-    categoria.categoriaPadreId !== null
-  )
+  return true
 }

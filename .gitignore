@@ -14,6 +14,8 @@ backend/.env.*
 !backend/.env.example
 backend/storage/documents/*
 !backend/storage/documents/.gitkeep
+backend/storage/organigrama/*
+!backend/storage/organigrama/.gitkeep
 
 .DS_Store
 Thumbs.db

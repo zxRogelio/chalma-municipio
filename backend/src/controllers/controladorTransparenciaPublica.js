@@ -3,6 +3,7 @@ import {
 } from "./controladorDocumentosAdministracion.js";
 import {
   obtenerCategoriaPorSlug,
+  obtenerCategoriaPublicaPorSlug,
   obtenerDocumentosPorCategoria,
   obtenerSeccionPorSlug,
   obtenerSeccionesActivas,
@@ -94,6 +95,36 @@ export async function consultarCategoria(solicitud, respuesta) {
 
   try {
     const datos = await obtenerCategoriaPorSlug(slug);
+
+    if (!datos) {
+      return respuesta.status(404).json({
+        exito: false,
+        mensaje: "Categoria no encontrada",
+      });
+    }
+
+    return respuesta.json({
+      exito: true,
+      datos,
+    });
+  } catch (error) {
+    console.error(error);
+    return ocurrioError(respuesta);
+  }
+}
+
+export async function consultarCategoriaPublicaPorSlug(
+  solicitud,
+  respuesta
+) {
+  const { slug } = solicitud.params;
+
+  if (!slugEsValido(slug)) {
+    return parametrosInvalidos(respuesta);
+  }
+
+  try {
+    const datos = await obtenerCategoriaPublicaPorSlug(slug);
 
     if (!datos) {
       return respuesta.status(404).json({

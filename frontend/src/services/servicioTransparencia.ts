@@ -1,5 +1,6 @@
 import api from './api'
 import type {
+  CategoriaPublicaTransparencia,
   CategoriaTransparencia,
   CategoriaTransparenciaRespuesta,
   DocumentoTransparencia,
@@ -19,6 +20,37 @@ function normalizarDocumento(
     urlPublica: documento.urlPublica ?? null,
     tamanoBytes: documento.tamanoBytes ?? null,
     fechaPublicacion: documento.fechaPublicacion ?? null,
+  }
+}
+
+function normalizarResumenCategoria(
+  categoria: CategoriaTransparenciaRespuesta,
+) {
+  return {
+    id: categoria.id,
+    categoriaPadreId: categoria.categoriaPadreId ?? null,
+    titulo: categoria.titulo,
+    slug: categoria.slug,
+    descripcion: categoria.descripcion ?? null,
+    fundamentoLegal: categoria.fundamentoLegal ?? null,
+    tipoSeccion: categoria.tipoSeccion,
+    orden: categoria.orden,
+    estaActivo: categoria.estaActivo,
+    cantidadDocumentos: categoria.cantidadDocumentos ?? 0,
+  }
+}
+
+function normalizarCategoriaPublica(
+  datos: CategoriaPublicaTransparencia,
+): CategoriaPublicaTransparencia {
+  return {
+    categoria: normalizarResumenCategoria(datos.categoria),
+    categoriaPadre: datos.categoriaPadre
+      ? normalizarResumenCategoria(datos.categoriaPadre)
+      : null,
+    breadcrumbs: datos.breadcrumbs.map(normalizarResumenCategoria),
+    subcategorias: datos.subcategorias.map(normalizarResumenCategoria),
+    documentos: datos.documentos.map(normalizarDocumento),
   }
 }
 
@@ -78,6 +110,20 @@ export async function obtenerCategoriaPorSlug(
   )
 
   return normalizarCategoria(respuesta.data.datos)
+}
+
+export async function obtenerCategoriaPublicaPorSlug(
+  slug: string,
+  opciones: OpcionesConsultaApi = {},
+) {
+  const respuesta = await api.get<RespuestaApi<CategoriaPublicaTransparencia>>(
+    `/transparencia/categorias/slug/${slug}`,
+    {
+      signal: opciones.signal,
+    },
+  )
+
+  return normalizarCategoriaPublica(respuesta.data.datos)
 }
 
 export async function obtenerDocumentosPorCategoria(

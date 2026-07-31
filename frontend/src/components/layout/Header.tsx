@@ -4,7 +4,14 @@ import {
   governmentHeaderNavigation,
   transparencyNavigation,
 } from '../../data/navigation'
-import type { NavGroupKey, NavItem } from '../../types/site'
+import {
+  obtenerSeccionesTransparencia,
+} from '../../services/servicioTransparencia'
+import type {
+  IconoTransparenciaTipo,
+  NavGroupKey,
+  NavItem,
+} from '../../types/site'
 import { IconoPortal } from '../common/IconoPortal'
 import { IconoTransparencia } from '../transparencia/IconoTransparencia'
 
@@ -14,6 +21,19 @@ interface HeaderProps {
 }
 
 const LOGO_HEADER = '/assets/img/logo_header.png'
+const enlacesExternosTransparencia = transparencyNavigation.filter(
+  (item) => item.external,
+)
+
+const iconosPorTipoSeccion: Record<string, IconoTransparenciaTipo> = {
+  obligaciones_comunes: 'obligaciones',
+  obligaciones_especificas: 'especificas',
+  obras_publicas: 'obras',
+  fondos_federales: 'fondos',
+  informacion_financiera: 'finanzas',
+  cuenta_publica: 'cuenta',
+  licitaciones: 'licitaciones',
+}
 
 export function Header({
   onSearchOpen,
@@ -26,8 +46,40 @@ export function Header({
     useState<NavGroupKey | null>(null)
   const [isScrolled, setIsScrolled] = useState(false)
   const [isHighContrast, setIsHighContrast] = useState(false)
+  const [itemsTransparencia, setItemsTransparencia] =
+    useState<NavItem[]>(enlacesExternosTransparencia)
 
   const isHome = location.pathname === '/'
+
+  useEffect(() => {
+    let estaMontado = true
+
+    obtenerSeccionesTransparencia()
+      .then((categorias) => {
+        if (!estaMontado) {
+          return
+        }
+
+        const categoriasPublicas = categorias.map<NavItem>((categoria) => ({
+          label: categoria.titulo,
+          to: `/transparencia/apartado/${categoria.slug}`,
+          description: categoria.descripcion ?? undefined,
+          icono: iconosPorTipoSeccion[categoria.tipoSeccion] ?? 'documentos',
+        }))
+
+        setItemsTransparencia([
+          ...enlacesExternosTransparencia,
+          ...categoriasPublicas,
+        ])
+      })
+      .catch((error: unknown) => {
+        console.error(error)
+      })
+
+    return () => {
+      estaMontado = false
+    }
+  }, [])
 
   useEffect(() => {
     const storedValue =
@@ -276,7 +328,7 @@ export function Header({
             {renderDropdown(
               'transparency',
               'Transparencia',
-              transparencyNavigation,
+              itemsTransparencia,
               true,
             )}
 

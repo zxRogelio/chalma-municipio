@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   consultarCategoria,
+  consultarCategoriaPublicaPorSlug,
   consultarSeccion,
   listarDocumentosDeCategoria,
   listarSecciones,
@@ -14,6 +15,10 @@ rutasTransparenciaPublica.get("/secciones/:slug", consultarSeccion);
 rutasTransparenciaPublica.get(
   "/documentos/:id/archivo",
   servirArchivoDocumento
+);
+rutasTransparenciaPublica.get(
+  "/categorias/slug/:slug",
+  consultarCategoriaPublicaPorSlug
 );
 rutasTransparenciaPublica.get("/categorias/:slug", consultarCategoria);
 rutasTransparenciaPublica.get(

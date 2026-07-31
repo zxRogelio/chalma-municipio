@@ -27,7 +27,7 @@ function formatearDocumento(documento) {
     tipoArchivo: datos.tipoArchivo,
     tipoMime: datos.tipoMime,
     nombreOriginal: datos.nombreOriginal,
-    urlPublica: datos.urlPublica,
+    urlPublica: null,
     tamanoBytes: datos.tamanoBytes,
     fechaPublicacion: datos.fechaPublicacion,
     orden: datos.orden,
@@ -35,8 +35,27 @@ function formatearDocumento(documento) {
   };
 }
 
+function formatearCategoriaResumen(datos) {
+  const categoria = datos.get ? datos.get({ plain: true }) : datos;
+  const documentos = categoria.documentos || [];
+
+  return {
+    id: categoria.id,
+    categoriaPadreId: categoria.categoriaPadreId,
+    titulo: categoria.titulo,
+    slug: categoria.slug,
+    descripcion: categoria.descripcion,
+    fundamentoLegal: categoria.fundamentoLegal,
+    tipoSeccion: categoria.tipoSeccion,
+    orden: categoria.orden,
+    estaActivo: categoria.estaActivo,
+    cantidadDocumentos: documentos.length,
+  };
+}
+
 function formatearCategoria(categoria, incluirDocumentos = false) {
   const datos = categoria.get({ plain: true });
+  const documentos = datos.documentos || [];
 
   return {
     id: datos.id,
@@ -48,8 +67,12 @@ function formatearCategoria(categoria, incluirDocumentos = false) {
     tipoSeccion: datos.tipoSeccion,
     orden: datos.orden,
     estaActivo: datos.estaActivo,
+    cantidadDocumentos: documentos.length,
+    categoriaPadre: datos.categoriaPadre
+      ? formatearCategoriaResumen(datos.categoriaPadre)
+      : null,
     documentos: incluirDocumentos
-      ? (datos.documentos || []).map(formatearDocumento)
+      ? documentos.map(formatearDocumento)
       : undefined,
     categoriasHijas: (datos.categoriasHijas || []).map((categoriaHija) => ({
       id: categoriaHija.id,
@@ -64,6 +87,35 @@ function formatearCategoria(categoria, incluirDocumentos = false) {
       cantidadDocumentos: categoriaHija.documentos?.length || 0,
     })),
   };
+}
+
+async function obtenerBreadcrumbsCategoria(categoria) {
+  const breadcrumbs = [];
+  let categoriaPadreId = categoria.categoriaPadreId;
+  let profundidad = 0;
+
+  while (categoriaPadreId && profundidad < 80) {
+    const categoriaPadre = await CategoriaTransparencia.findOne({
+      where: {
+        id: categoriaPadreId,
+        estaActivo: true,
+      },
+    });
+
+    if (!categoriaPadre) {
+      return null;
+    }
+
+    breadcrumbs.unshift(formatearCategoriaResumen(categoriaPadre));
+    categoriaPadreId = categoriaPadre.categoriaPadreId;
+    profundidad += 1;
+  }
+
+  if (profundidad >= 80) {
+    return null;
+  }
+
+  return breadcrumbs;
 }
 
 export async function obtenerSeccionesActivas() {
@@ -86,6 +138,12 @@ export async function obtenerSeccionesActivas() {
             required: false,
           },
         ],
+      },
+      {
+        model: DocumentoTransparencia,
+        as: "documentos",
+        where: { estaActivo: true },
+        required: false,
       },
     ],
     order: ordenCategorias,
@@ -153,6 +211,100 @@ export async function obtenerCategoriaPorSlug(slug) {
   });
 
   return categoria ? formatearCategoria(categoria, true) : null;
+}
+
+export async function obtenerCategoriaPublicaPorSlug(slug) {
+  const categoria = await CategoriaTransparencia.findOne({
+    where: {
+      slug,
+      estaActivo: true,
+    },
+    include: [
+      {
+        model: CategoriaTransparencia,
+        as: "categoriaPadre",
+        required: false,
+      },
+      {
+        model: CategoriaTransparencia,
+        as: "categoriasHijas",
+        where: { estaActivo: true },
+        required: false,
+        include: [
+          {
+            model: DocumentoTransparencia,
+            as: "documentos",
+            where: { estaActivo: true },
+            required: false,
+          },
+        ],
+      },
+      {
+        model: DocumentoTransparencia,
+        as: "documentos",
+        where: { estaActivo: true },
+        required: false,
+      },
+    ],
+    order: [
+      [
+        { model: CategoriaTransparencia, as: "categoriasHijas" },
+        "orden",
+        "ASC",
+      ],
+      [
+        { model: CategoriaTransparencia, as: "categoriasHijas" },
+        "titulo",
+        "ASC",
+      ],
+      [
+        { model: DocumentoTransparencia, as: "documentos" },
+        "ejercicioFiscal",
+        "DESC",
+      ],
+      [
+        { model: DocumentoTransparencia, as: "documentos" },
+        "orden",
+        "ASC",
+      ],
+      [
+        { model: DocumentoTransparencia, as: "documentos" },
+        "titulo",
+        "ASC",
+      ],
+    ],
+  });
+
+  if (!categoria) {
+    return null;
+  }
+
+  const breadcrumbs = await obtenerBreadcrumbsCategoria(categoria);
+
+  if (!breadcrumbs) {
+    return null;
+  }
+
+  const categoriaFormateada = formatearCategoria(categoria, true);
+
+  return {
+    categoria: {
+      ...categoriaFormateada,
+      categoriaPadre:
+        breadcrumbs.length > 0
+          ? breadcrumbs[breadcrumbs.length - 1]
+          : null,
+      documentos: undefined,
+      categoriasHijas: undefined,
+    },
+    categoriaPadre:
+      breadcrumbs.length > 0
+        ? breadcrumbs[breadcrumbs.length - 1]
+        : null,
+    breadcrumbs,
+    subcategorias: categoriaFormateada.categoriasHijas || [],
+    documentos: categoriaFormateada.documentos || [],
+  };
 }
 
 export async function obtenerDocumentosPorCategoria(slug, filtros = {}) {

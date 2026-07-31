@@ -53,6 +53,14 @@ export interface CategoriaTransparencia
   documentos?: DocumentoTransparencia[]
 }
 
+export interface CategoriaPublicaTransparencia {
+  categoria: CategoriaTransparenciaResumen
+  categoriaPadre: CategoriaTransparenciaResumen | null
+  breadcrumbs: CategoriaTransparenciaResumen[]
+  subcategorias: CategoriaTransparenciaResumen[]
+  documentos: DocumentoTransparencia[]
+}
+
 export type CategoriaTransparenciaRespuesta = Omit<
   CategoriaTransparencia,
   'cantidadDocumentos' | 'categoriasHijas' | 'categoriaPadre' | 'documentos'

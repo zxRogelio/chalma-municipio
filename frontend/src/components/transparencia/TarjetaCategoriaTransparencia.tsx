@@ -15,12 +15,17 @@ export function TarjetaCategoriaTransparencia({
   return (
     <Link
       className="transparency-category-card"
-      to={`/transparencia/obligaciones-comunes/${categoria.slug}`}
+      to={`/transparencia/apartado/${categoria.slug}`}
       title={categoria.titulo}
       aria-label={`${categoria.titulo}, ${cantidadDocumentos} ${textoDocumentos}`}
     >
       <IconoPortal tipo="carpeta" className="folder-icon" />
       <h3>{categoria.titulo}</h3>
+      {categoria.descripcion ? (
+        <p className="transparency-category-description">
+          {categoria.descripcion}
+        </p>
+      ) : null}
       <p>
         {cantidadDocumentos} {textoDocumentos}
       </p>

@@ -1,8 +1,23 @@
 import { Link } from 'react-router-dom'
+import { usarContacto } from '../../context/ContextoContacto'
 import { IconoPortal } from '../common/IconoPortal'
+
+function construirEnlaceTelefono(telefono: string) {
+  return `tel:${telefono.replace(/[^\d+]/g, '')}`
+}
 
 export function Footer() {
   const currentYear = new Date().getFullYear()
+  const { configuracion } = usarContacto()
+  const telefonoVisible =
+    configuracion.mostrarTelefono && configuracion.telefono
+      ? configuracion.telefono
+      : null
+  const correoVisible =
+    configuracion.mostrarCorreo && configuracion.correo
+      ? configuracion.correo
+      : null
+  const tieneContactoVisible = Boolean(telefonoVisible || correoVisible)
 
   return (
     <footer className="site-footer">
@@ -31,22 +46,26 @@ export function Footer() {
             Contacto
           </Link>
         </div>
-        <div>
-          <h2 className="footer-title">Contacto</h2>
-          <p className="footer-link">
-            <IconoPortal tipo="ubicacion" className="footer-icon" />
-            Palacio Municipal de Chalma, Veracruz
-          </p>
-          <p className="footer-link">
-            <IconoPortal tipo="telefono" className="footer-icon" />
-            Tel. 000 000 00 00
-          </p>
-          <p className="footer-link">
-            <IconoPortal tipo="correo" className="footer-icon" />
-            contacto@chalma.gob.mx
-          </p>
-          <small>Datos provisionales sujetos a sustitucion oficial.</small>
-        </div>
+        {tieneContactoVisible ? (
+          <div>
+            <h2 className="footer-title">Contacto</h2>
+            {telefonoVisible ? (
+              <a
+                className="footer-link"
+                href={construirEnlaceTelefono(telefonoVisible)}
+              >
+                <IconoPortal tipo="telefono" className="footer-icon" />
+                {telefonoVisible}
+              </a>
+            ) : null}
+            {correoVisible ? (
+              <a className="footer-link" href={`mailto:${correoVisible}`}>
+                <IconoPortal tipo="correo" className="footer-icon" />
+                {correoVisible}
+              </a>
+            ) : null}
+          </div>
+        ) : null}
       </div>
       <div className="footer-bottom">
         {currentYear} H. Ayuntamiento de Chalma. Todos los derechos reservados.

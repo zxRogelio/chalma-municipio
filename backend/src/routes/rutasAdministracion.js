@@ -3,7 +3,10 @@ import {
   listarSeccionesPrincipales,
 } from "../controllers/controladorCategoriasAdministracion.js";
 import rutasCategoriasAdministracion from "./rutasCategoriasAdministracion.js";
+import rutasContactoAdministracion from "./rutasContactoAdministracion.js";
+import rutasDirectorioAdministracion from "./rutasDirectorioAdministracion.js";
 import rutasDocumentosAdministracion from "./rutasDocumentosAdministracion.js";
+import rutasOrganigramaAdministracion from "./rutasOrganigramaAdministracion.js";
 
 const rutasAdministracion = Router();
 
@@ -21,6 +24,10 @@ rutasAdministracion.get(
   "/transparencia/secciones",
   listarSeccionesPrincipales
 );
+
+rutasAdministracion.use("/contacto", rutasContactoAdministracion);
+rutasAdministracion.use("/directorio", rutasDirectorioAdministracion);
+rutasAdministracion.use("/organigrama", rutasOrganigramaAdministracion);
 
 rutasAdministracion.use(
   "/transparencia",

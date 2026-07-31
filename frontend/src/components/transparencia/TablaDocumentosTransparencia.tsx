@@ -22,6 +22,24 @@ function formatearTamano(tamanoBytes: number | null) {
   return `${(tamanoBytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
+function formatearFecha(fecha: string | null) {
+  if (!fecha) {
+    return 'Por definir'
+  }
+
+  const fechaDocumento = new Date(fecha)
+
+  if (Number.isNaN(fechaDocumento.getTime())) {
+    return 'Por definir'
+  }
+
+  return new Intl.DateTimeFormat('es-MX', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  }).format(fechaDocumento)
+}
+
 export function TablaDocumentosTransparencia({
   documentos,
 }: PropiedadesTablaDocumentosTransparencia) {
@@ -45,6 +63,7 @@ export function TablaDocumentosTransparencia({
             <th>Periodo</th>
             <th>Tipo</th>
             <th>Tamanio</th>
+            <th>Publicado</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -54,13 +73,19 @@ export function TablaDocumentosTransparencia({
               <td>
                 <div className="document-title-cell">
                   <IconoArchivoDocumento tipoArchivo={documento.tipoArchivo} />
-                  <span title={documento.titulo}>{documento.titulo}</span>
+                  <span title={documento.titulo}>
+                    <strong>{documento.titulo}</strong>
+                    {documento.descripcion ? (
+                      <small>{documento.descripcion}</small>
+                    ) : null}
+                  </span>
                 </div>
               </td>
               <td>{documento.ejercicioFiscal}</td>
               <td>{documento.periodo}</td>
               <td>{documento.tipoArchivo}</td>
               <td>{formatearTamano(documento.tamanoBytes)}</td>
+              <td>{formatearFecha(documento.fechaPublicacion)}</td>
               <td>
                 <AccionesDocumento documento={documento} />
               </td>

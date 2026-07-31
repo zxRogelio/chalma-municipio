@@ -894,6 +894,27 @@ button:disabled {
   gap: 14px;
 }
 
+.contacto-publico__estado {
+  min-height: 96px;
+  padding: 22px;
+  display: grid;
+  align-content: center;
+  gap: 14px;
+  color: var(--ink);
+  background: #ffffff;
+  border: 1px dashed #d8dde5;
+  border-radius: var(--radius);
+  box-shadow: 0 14px 34px rgba(25, 31, 45, 0.06);
+}
+
+.contacto-publico__estado p {
+  margin: 0;
+}
+
+.contacto-publico__estado--error {
+  border-color: #f0cdb7;
+}
+
 .contacto-publico__dato {
   min-height: 96px;
   padding: 18px;
@@ -975,6 +996,14 @@ a.contacto-publico__dato:focus-visible {
 .contacto-mapa__encabezado {
   max-width: 760px;
   margin-bottom: 24px;
+}
+
+.contacto-mapa__encabezado--split {
+  max-width: none;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
 }
 
 .contacto-mapa__encabezado p {
@@ -1310,6 +1339,36 @@ a.contacto-publico__dato:focus-visible {
   margin: 25px 0 0;
 }
 
+.organigrama-publico {
+  display: grid;
+  gap: 24px;
+}
+
+.organigrama-publico__heading {
+  align-items: flex-start;
+}
+
+.organigrama-publico__heading > div {
+  min-width: 0;
+}
+
+.organigrama-publico__imagen {
+  padding: 18px;
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 12px 30px rgba(25, 31, 45, 0.08);
+}
+
+.organigrama-publico__imagen img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  background: #ffffff;
+  border-radius: calc(var(--radius) - 2px);
+}
+
 .people-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -1383,6 +1442,90 @@ a.contacto-publico__dato:focus-visible {
 .directory-table td:first-child {
   color: var(--ink);
   font-weight: 750;
+}
+
+.directorio-publico-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.directorio-publico-card {
+  min-width: 0;
+  padding: 22px;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 10px 28px rgba(25, 31, 45, 0.08);
+}
+
+.directorio-publico-card__heading {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.directorio-publico-card__heading > span {
+  width: 54px;
+  height: 54px;
+  display: grid;
+  place-items: center;
+  color: var(--wine);
+  background: var(--soft-wine);
+  border-radius: var(--radius);
+}
+
+.directorio-publico-card__heading svg {
+  width: 28px;
+  height: 28px;
+}
+
+.directorio-publico-card h3 {
+  margin: 4px 0 0;
+  overflow-wrap: anywhere;
+  color: var(--ink);
+  font-size: 22px;
+  line-height: 1.2;
+}
+
+.directorio-publico-card__datos {
+  display: grid;
+  gap: 12px;
+  margin: 18px 0 0;
+}
+
+.directorio-publico-card__datos div {
+  min-width: 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.directorio-publico-card__datos dt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #7a8493;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.directorio-publico-card__datos dt svg {
+  width: 17px;
+  height: 17px;
+  color: var(--wine);
+}
+
+.directorio-publico-card__datos dd {
+  margin: 4px 0 0;
+  overflow-wrap: anywhere;
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.directorio-publico-card__datos a {
+  color: var(--wine);
 }
 
 .department-grid {
@@ -2170,6 +2313,10 @@ a.contacto-publico__dato:focus-visible {
   border-radius: var(--radius);
 }
 
+.admin-filters--compact {
+  grid-template-columns: minmax(220px, 420px);
+}
+
 .admin-filter-actions {
   display: flex;
   align-items: end;
@@ -2201,6 +2348,92 @@ a.contacto-publico__dato:focus-visible {
 .admin-category-form {
   display: grid;
   gap: 15px;
+}
+
+.admin-contact-form {
+  width: min(760px, 100%);
+  padding: 22px;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 10px 28px rgba(25, 31, 45, 0.08);
+}
+
+.admin-contact-form .admin-actions {
+  justify-content: flex-start;
+}
+
+.admin-organigrama-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(360px, 1.1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.admin-organigrama-panel {
+  display: grid;
+  gap: 16px;
+}
+
+.admin-organigrama-panel__heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.admin-organigrama-panel__heading > svg {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  padding: 9px;
+  color: var(--wine);
+  background: var(--soft-wine);
+  border-radius: var(--radius);
+}
+
+.admin-organigrama-panel h3 {
+  margin: 0 0 4px;
+  color: var(--ink);
+}
+
+.admin-organigrama-panel p {
+  margin: 0;
+}
+
+.admin-organigrama-preview,
+.admin-organigrama-empty {
+  min-height: 260px;
+  display: grid;
+  place-items: center;
+  background: #f7f8fa;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.admin-organigrama-preview {
+  padding: 12px;
+}
+
+.admin-organigrama-preview img {
+  max-width: 100%;
+  max-height: 420px;
+  display: block;
+  object-fit: contain;
+  background: #ffffff;
+}
+
+.admin-organigrama-empty {
+  padding: 22px;
+  color: #7a8493;
+  font-weight: 800;
+  text-align: center;
+}
+
+.admin-upload-field {
+  display: grid;
+  gap: 7px;
+  color: var(--ink);
+  font-weight: 800;
 }
 
 .admin-category-form input[type='file'] {
@@ -2509,6 +2742,18 @@ a.contacto-publico__dato:focus-visible {
   font-weight: 750;
 }
 
+.transparency-category-description {
+  width: 100%;
+  min-height: 44px;
+  margin-bottom: 10px !important;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  font-weight: 500 !important;
+  line-height: 1.45;
+}
+
 .transparency-detail {
   display: grid;
   gap: 28px;
@@ -2528,9 +2773,7 @@ a.contacto-publico__dato:focus-visible {
 
 .transparency-detail-card h2 {
   max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
 }
 
 .legal-basis {
@@ -2539,6 +2782,61 @@ a.contacto-publico__dato:focus-visible {
   border-top: 1px solid var(--line);
 }
 
+.categoria-transparencia__informacion {
+  padding: 26px;
+  display: grid;
+  gap: 20px;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 10px 28px rgba(25, 31, 45, 0.08);
+}
+
+.categoria-transparencia__encabezado {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.categoria-transparencia__encabezado > div {
+  min-width: 0;
+}
+
+.categoria-transparencia__encabezado h2 {
+  margin: 4px 0 0;
+  color: var(--ink);
+  font-size: 28px;
+  line-height: 1.2;
+}
+
+.categoria-transparencia__bloque {
+  max-width: 920px;
+}
+
+.categoria-transparencia__bloque--fundamento {
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.categoria-transparencia__bloque h3 {
+  margin: 0 0 10px;
+  color: var(--ink);
+  font-size: 20px;
+}
+
+.categoria-transparencia__bloque p {
+  margin: 0;
+  color: #4e5867;
+  line-height: 1.72;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.categoria-transparencia__bloque p + p {
+  margin-top: 14px;
+}
+
+.transparency-subcategories,
 .transparency-files {
   display: grid;
   gap: 20px;
@@ -2558,7 +2856,7 @@ a.contacto-publico__dato:focus-visible {
 
 .transparency-document-table {
   width: 100%;
-  min-width: 980px;
+  min-width: 1120px;
   border-collapse: collapse;
 }
 
@@ -2590,11 +2888,26 @@ a.contacto-publico__dato:focus-visible {
 
 .document-title-cell > span:last-child {
   max-width: 310px;
-  overflow: hidden;
   color: var(--ink);
+}
+
+.document-title-cell strong,
+.document-title-cell small {
+  display: block;
+}
+
+.document-title-cell strong {
+  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-weight: 750;
+  font-weight: 850;
+}
+
+.document-title-cell small {
+  margin-top: 3px;
+  color: #6f7784;
+  font-size: 12px;
+  line-height: 1.35;
 }
 
 .document-file-icon {
@@ -2845,7 +3158,13 @@ body.high-contrast .contacto-publico__introduccion,
 body.high-contrast .contacto-publico__dato,
 body.high-contrast .contacto-publico__redes-vacio,
 body.high-contrast .contacto-mapa__marco,
-body.high-contrast .contacto-publico__nota {
+body.high-contrast .contacto-publico__nota,
+body.high-contrast .contacto-publico__estado,
+body.high-contrast .categoria-transparencia__informacion,
+body.high-contrast .directorio-publico-card,
+body.high-contrast .organigrama-publico__imagen,
+body.high-contrast .admin-organigrama-preview,
+body.high-contrast .admin-organigrama-empty {
   color: #ffffff;
   background: #070707;
   border-color: #ffdd00;
@@ -2855,7 +3174,13 @@ body.high-contrast .contacto-publico__dato strong,
 body.high-contrast .contacto-publico__dato small,
 body.high-contrast .contacto-publico__introduccion h2,
 body.high-contrast .contacto-publico__redes h3,
-body.high-contrast .contacto-mapa__encabezado h2 {
+body.high-contrast .contacto-mapa__encabezado h2,
+body.high-contrast .categoria-transparencia__encabezado h2,
+body.high-contrast .categoria-transparencia__bloque h3,
+body.high-contrast .categoria-transparencia__bloque p,
+body.high-contrast .directorio-publico-card h3,
+body.high-contrast .directorio-publico-card__datos dd,
+body.high-contrast .admin-organigrama-panel h3 {
   color: #ffffff;
 }
 
@@ -2896,7 +3221,8 @@ body.high-contrast .hero-logo {
   }
 
   .admin-section-grid,
-  .admin-detail-grid {
+  .admin-detail-grid,
+  .admin-organigrama-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -2923,6 +3249,11 @@ body.high-contrast .hero-logo {
 
   .transparency-category-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .directorio-publico-grid,
+  .admin-organigrama-grid {
+    grid-template-columns: 1fr;
   }
 
   .transparency-skeleton-grid {
@@ -3040,7 +3371,9 @@ body.high-contrast .hero-logo {
   .admin-dashboard-actions,
   .admin-filters,
   .admin-section-grid,
-  .admin-detail-grid {
+  .admin-detail-grid,
+  .directorio-publico-grid,
+  .admin-organigrama-grid {
     grid-template-columns: 1fr;
   }
 
@@ -3179,7 +3512,8 @@ body.high-contrast .hero-logo {
   }
 
   .transparency-detail-heading,
-  .transparency-heading-row {
+  .transparency-heading-row,
+  .categoria-transparencia__encabezado {
     display: block;
   }
 
@@ -3192,12 +3526,14 @@ body.high-contrast .hero-logo {
   }
 
   .document-feature,
-  .external-feature {
+  .external-feature,
+  .contacto-mapa__encabezado--split {
     display: block;
   }
 
   .document-feature .button,
-  .external-feature .button {
+  .external-feature .button,
+  .contacto-mapa__encabezado--split .button {
     margin-top: 20px;
   }
 
