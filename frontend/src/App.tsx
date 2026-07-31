@@ -1,4 +1,4 @@
-import { ProveedorAutenticacion } from './context/ContextoAutenticacion'
+import { ProveedorAutenticacion } from './context/ProveedorAutenticacion'
 import { RutasAplicacion } from './routes/RutasAplicacion'
 
 function App() {

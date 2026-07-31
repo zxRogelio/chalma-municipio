@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ConfirmacionEstadoCategoria } from '../../components/admin/ConfirmacionEstadoCategoria'
 import { ModalCategoriaAdministracion } from '../../components/admin/ModalCategoriaAdministracion'
 import { TablaCategoriasAdministracion } from '../../components/admin/TablaCategoriasAdministracion'
-import { usarAutenticacion } from '../../context/ContextoAutenticacion'
+import { useAutenticacion } from '../../context/useAutenticacion'
 import { usePageTitle } from '../../hooks/usePageTitle'
 import { esErrorNoAutorizado } from '../../services/api'
 import {
@@ -22,8 +22,9 @@ import type {
 export function PaginaSeccionTransparenciaAdministracion() {
   const { id } = useParams()
   const idSeccion = Number(id)
+  const idSeccionValido = Number.isInteger(idSeccion) && idSeccion > 0
   const navegar = useNavigate()
-  const { cerrarSesion } = usarAutenticacion()
+  const { cerrarSesion } = useAutenticacion()
   const [seccion, establecerSeccion] =
     useState<CategoriaAdministracion | null>(null)
   const [subcategorias, establecerSubcategorias] = useState<
@@ -32,7 +33,7 @@ export function PaginaSeccionTransparenciaAdministracion() {
   const [catalogoCategorias, establecerCatalogoCategorias] = useState<
     CategoriaAdministracion[]
   >([])
-  const [estaCargando, establecerEstaCargando] = useState(true)
+  const [estaCargando, establecerEstaCargando] = useState(idSeccionValido)
   const [mensajeError, establecerMensajeError] = useState('')
   const [mensajeOperacion, establecerMensajeOperacion] = useState('')
   const [modalAbierto, establecerModalAbierto] = useState(false)
@@ -46,21 +47,12 @@ export function PaginaSeccionTransparenciaAdministracion() {
 
   usePageTitle(seccion?.titulo ?? 'Seccion de transparencia')
 
-  const manejarSesionExpirada = async () => {
+  const manejarSesionExpirada = useCallback(async () => {
     await cerrarSesion()
     navegar('/admin/login', { replace: true })
-  }
+  }, [cerrarSesion, navegar])
 
-  const cargarDatos = async () => {
-    if (!Number.isInteger(idSeccion) || idSeccion <= 0) {
-      establecerMensajeError('Categoria no encontrada.')
-      establecerEstaCargando(false)
-      return
-    }
-
-    establecerEstaCargando(true)
-    establecerMensajeError('')
-
+  const cargarDatos = useCallback(async () => {
     try {
       const [respuestaSeccion, respuestaHijas, respuestaCatalogo] =
         await Promise.all([
@@ -72,6 +64,7 @@ export function PaginaSeccionTransparenciaAdministracion() {
       establecerSeccion(respuestaSeccion.datos)
       establecerSubcategorias(respuestaHijas.datos)
       establecerCatalogoCategorias(respuestaCatalogo.datos)
+      establecerMensajeError('')
     } catch (error) {
       if (esErrorNoAutorizado(error)) {
         await manejarSesionExpirada()
@@ -82,11 +75,50 @@ export function PaginaSeccionTransparenciaAdministracion() {
     } finally {
       establecerEstaCargando(false)
     }
-  }
+  }, [idSeccion, manejarSesionExpirada])
 
   useEffect(() => {
-    void cargarDatos()
-  }, [idSeccion])
+    if (!idSeccionValido) {
+      return undefined
+    }
+
+    let estaMontado = true
+
+    Promise.all([
+      obtenerCategoriaAdministracion(idSeccion),
+      listarSubcategoriasPorPadre(idSeccion),
+      listarCategoriasAdministracion({ estaActivo: 'todos' }),
+    ])
+      .then(([respuestaSeccion, respuestaHijas, respuestaCatalogo]) => {
+        if (!estaMontado) {
+          return
+        }
+
+        establecerSeccion(respuestaSeccion.datos)
+        establecerSubcategorias(respuestaHijas.datos)
+        establecerCatalogoCategorias(respuestaCatalogo.datos)
+        establecerMensajeError('')
+      })
+      .catch(async (error: unknown) => {
+        if (esErrorNoAutorizado(error)) {
+          await manejarSesionExpirada()
+          return
+        }
+
+        if (estaMontado) {
+          establecerMensajeError('No fue posible cargar la informacion.')
+        }
+      })
+      .finally(() => {
+        if (estaMontado) {
+          establecerEstaCargando(false)
+        }
+      })
+
+    return () => {
+      estaMontado = false
+    }
+  }, [idSeccion, idSeccionValido, manejarSesionExpirada])
 
   const guardarCategoria = async (datos: DatosCategoriaAdministracion) => {
     if (!seccion) {
@@ -214,20 +246,29 @@ export function PaginaSeccionTransparenciaAdministracion() {
         </div>
       ) : null}
 
-      {!estaCargando && mensajeError ? (
+      {!estaCargando && (mensajeError || !idSeccionValido) ? (
         <div className="transparency-empty-state transparency-empty-state--error">
-          <h3>{mensajeError}</h3>
-          <button
-            className="button button--primary"
-            type="button"
-            onClick={() => void cargarDatos()}
-          >
-            Reintentar
-          </button>
+          <h3>{mensajeError || 'Categoria no encontrada.'}</h3>
+          {idSeccionValido ? (
+            <button
+              className="button button--primary"
+              type="button"
+              onClick={() => {
+                establecerEstaCargando(true)
+                establecerMensajeError('')
+                void cargarDatos()
+              }}
+            >
+              Reintentar
+            </button>
+          ) : null}
         </div>
       ) : null}
 
-      {!estaCargando && !mensajeError && subcategorias.length === 0 ? (
+      {!estaCargando &&
+      !mensajeError &&
+      idSeccionValido &&
+      subcategorias.length === 0 ? (
         <div className="transparency-empty-state">
           <h3>Esta seccion todavia no tiene fracciones o subcategorias.</h3>
         </div>

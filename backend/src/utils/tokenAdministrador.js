@@ -1,17 +1,13 @@
 import jwt from "jsonwebtoken";
+import { configuracionEntorno } from "../config/configuracionEntorno.js";
+import {
+  obtenerNombreCookieAdministrador,
+  obtenerOpcionesBorradoCookieAdministrador,
+  obtenerOpcionesCookieAdministrador,
+} from "../config/opcionesCookieAdministrador.js";
 
 export function obtenerNombreCookie() {
-  return process.env.COOKIE_NAME || "chalma_admin_sesion";
-}
-
-function obtenerJwtSecret() {
-  const secreto = process.env.JWT_SECRET;
-
-  if (!secreto || secreto.length < 32) {
-    throw new Error("La configuracion de JWT no es valida");
-  }
-
-  return secreto;
+  return obtenerNombreCookieAdministrador();
 }
 
 export function generarTokenAdministrador(administrador) {
@@ -22,13 +18,13 @@ export function generarTokenAdministrador(administrador) {
     versionSesion: Number(administrador.versionSesion) || 0,
   };
 
-  return jwt.sign(payload, obtenerJwtSecret(), {
-    expiresIn: process.env.JWT_EXPIRES_IN || "8h",
+  return jwt.sign(payload, configuracionEntorno.jwtSecret, {
+    expiresIn: configuracionEntorno.jwtExpiresIn,
   });
 }
 
 export function verificarTokenAdministrador(token) {
-  const payload = jwt.verify(token, obtenerJwtSecret());
+  const payload = jwt.verify(token, configuracionEntorno.jwtSecret);
 
   if (
     !payload ||
@@ -49,20 +45,9 @@ export function verificarTokenAdministrador(token) {
 }
 
 export function obtenerOpcionesCookie() {
-  return {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    maxAge: 8 * 60 * 60 * 1000,
-  };
+  return obtenerOpcionesCookieAdministrador();
 }
 
 export function obtenerOpcionesParaBorrarCookie() {
-  return {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-  };
+  return obtenerOpcionesBorradoCookieAdministrador();
 }

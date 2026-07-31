@@ -2,7 +2,7 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import type { Location } from 'react-router-dom'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
-import { usarAutenticacion } from '../../context/ContextoAutenticacion'
+import { useAutenticacion } from '../../context/useAutenticacion'
 import { usePageTitle } from '../../hooks/usePageTitle'
 import type { EstadoLoginAdministracion } from '../../types/cuentaAdministracion'
 
@@ -16,7 +16,7 @@ export function AdminLoginPage() {
     estaAutenticado,
     estaCargando,
     iniciarSesion,
-  } = usarAutenticacion()
+  } = useAutenticacion()
   const ubicacion = useLocation()
   const navegar = useNavigate()
   const estadoRuta = ubicacion.state as

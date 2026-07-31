@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ConfirmacionEstadoDocumento } from '../../components/admin/documentos/ConfirmacionEstadoDocumento'
 import { ModalDocumentoAdministracion } from '../../components/admin/documentos/ModalDocumentoAdministracion'
 import { ReemplazarArchivoDocumento } from '../../components/admin/documentos/ReemplazarArchivoDocumento'
 import { TablaDocumentosAdministracion } from '../../components/admin/documentos/TablaDocumentosAdministracion'
-import { usarAutenticacion } from '../../context/ContextoAutenticacion'
+import { useAutenticacion } from '../../context/useAutenticacion'
 import { usePageTitle } from '../../hooks/usePageTitle'
 import {
   esErrorNoAutorizado,
@@ -46,8 +46,10 @@ function obtenerMensajeDocumentos(error: unknown, respaldo: string) {
 export function PaginaDocumentosCategoriaAdministracion() {
   const { id } = useParams()
   const idCategoria = Number(id)
+  const idCategoriaValido =
+    Number.isInteger(idCategoria) && idCategoria > 0
   const navegar = useNavigate()
-  const { cerrarSesion } = usarAutenticacion()
+  const { cerrarSesion } = useAutenticacion()
   const [categoria, establecerCategoria] =
     useState<CategoriaAdministracion | null>(null)
   const [documentos, establecerDocumentos] = useState<
@@ -57,7 +59,8 @@ export function PaginaDocumentosCategoriaAdministracion() {
     useState<FiltrosDocumentosAdministracion>(filtrosIniciales)
   const [filtrosAplicados, establecerFiltrosAplicados] =
     useState<FiltrosDocumentosAdministracion>(filtrosIniciales)
-  const [estaCargando, establecerEstaCargando] = useState(true)
+  const [estaCargando, establecerEstaCargando] =
+    useState(idCategoriaValido)
   const [mensajeError, establecerMensajeError] = useState('')
   const [mensajeOperacion, establecerMensajeOperacion] = useState('')
   const [modalDocumentoAbierto, establecerModalDocumentoAbierto] =
@@ -78,23 +81,14 @@ export function PaginaDocumentosCategoriaAdministracion() {
       : 'Documentos de transparencia',
   )
 
-  const manejarSesionExpirada = async () => {
+  const manejarSesionExpirada = useCallback(async () => {
     await cerrarSesion()
     navegar('/admin/login', { replace: true })
-  }
+  }, [cerrarSesion, navegar])
 
-  const cargarDatos = async (
+  const cargarDatos = useCallback(async (
     filtrosConsulta: FiltrosDocumentosAdministracion = filtrosAplicados,
   ) => {
-    if (!Number.isInteger(idCategoria) || idCategoria <= 0) {
-      establecerMensajeError('Categoria no encontrada.')
-      establecerEstaCargando(false)
-      return
-    }
-
-    establecerEstaCargando(true)
-    establecerMensajeError('')
-
     try {
       const [respuestaCategoria, respuestaDocumentos] = await Promise.all([
         obtenerCategoriaAdministracion(idCategoria),
@@ -103,6 +97,7 @@ export function PaginaDocumentosCategoriaAdministracion() {
 
       establecerCategoria(respuestaCategoria.datos)
       establecerDocumentos(respuestaDocumentos.datos)
+      establecerMensajeError('')
     } catch (error) {
       if (esErrorNoAutorizado(error)) {
         await manejarSesionExpirada()
@@ -118,22 +113,71 @@ export function PaginaDocumentosCategoriaAdministracion() {
     } finally {
       establecerEstaCargando(false)
     }
-  }
+  }, [filtrosAplicados, idCategoria, manejarSesionExpirada])
 
   useEffect(() => {
-    void cargarDatos()
-  }, [idCategoria])
+    if (!idCategoriaValido) {
+      return undefined
+    }
+
+    let estaMontado = true
+
+    Promise.all([
+      obtenerCategoriaAdministracion(idCategoria),
+      listarDocumentosAdministracion(idCategoria, filtrosAplicados),
+    ])
+      .then(([respuestaCategoria, respuestaDocumentos]) => {
+        if (!estaMontado) {
+          return
+        }
+
+        establecerCategoria(respuestaCategoria.datos)
+        establecerDocumentos(respuestaDocumentos.datos)
+        establecerMensajeError('')
+      })
+      .catch(async (error: unknown) => {
+        if (esErrorNoAutorizado(error)) {
+          await manejarSesionExpirada()
+          return
+        }
+
+        if (estaMontado) {
+          establecerMensajeError(
+            obtenerMensajeDocumentos(
+              error,
+              'No fue posible cargar los documentos.',
+            ),
+          )
+        }
+      })
+      .finally(() => {
+        if (estaMontado) {
+          establecerEstaCargando(false)
+        }
+      })
+
+    return () => {
+      estaMontado = false
+    }
+  }, [
+    filtrosAplicados,
+    idCategoria,
+    idCategoriaValido,
+    manejarSesionExpirada,
+  ])
 
   const aplicarFiltros = (evento: FormEvent<HTMLFormElement>) => {
     evento.preventDefault()
+    establecerEstaCargando(true)
+    establecerMensajeError('')
     establecerFiltrosAplicados(filtros)
-    void cargarDatos(filtros)
   }
 
   const limpiarFiltros = () => {
+    establecerEstaCargando(true)
+    establecerMensajeError('')
     establecerFiltros(filtrosIniciales)
     establecerFiltrosAplicados(filtrosIniciales)
-    void cargarDatos(filtrosIniciales)
   }
 
   const guardarDocumento = async (
@@ -425,26 +469,38 @@ export function PaginaDocumentosCategoriaAdministracion() {
         </div>
       ) : null}
 
-      {!estaCargando && mensajeError ? (
+      {!estaCargando && (mensajeError || !idCategoriaValido) ? (
         <div className="transparency-empty-state transparency-empty-state--error">
-          <h3>{mensajeError}</h3>
-          <button
-            className="button button--primary"
-            type="button"
-            onClick={() => void cargarDatos()}
-          >
-            Reintentar
-          </button>
+          <h3>{mensajeError || 'Categoria no encontrada.'}</h3>
+          {idCategoriaValido ? (
+            <button
+              className="button button--primary"
+              type="button"
+              onClick={() => {
+                establecerEstaCargando(true)
+                establecerMensajeError('')
+                void cargarDatos()
+              }}
+            >
+              Reintentar
+            </button>
+          ) : null}
         </div>
       ) : null}
 
-      {!estaCargando && !mensajeError && documentos.length === 0 ? (
+      {!estaCargando &&
+      !mensajeError &&
+      idCategoriaValido &&
+      documentos.length === 0 ? (
         <div className="transparency-empty-state">
           <h3>No hay documentos publicados en esta fraccion.</h3>
         </div>
       ) : null}
 
-      {!estaCargando && !mensajeError && documentos.length > 0 ? (
+      {!estaCargando &&
+      !mensajeError &&
+      idCategoriaValido &&
+      documentos.length > 0 ? (
         <TablaDocumentosAdministracion
           documentos={documentos}
           onEditar={(documento) => {

@@ -1,80 +1,135 @@
 # Portal Municipal de Chalma
 
-## Descripcion
+Portal web municipal administrable para Chalma, Veracruz. El proyecto contiene
+frontend React y backend Express con MySQL, preparado para una futura puesta en
+produccion mediante cPanel.
 
-Portal municipal administrable enfocado en gobierno, tramites, contacto y transparencia.
+## Estado actual
 
-Noticias, Difusion, Galeria y Videos no forman parte de la version actual.
+Actualmente existen:
+
+- Frontend React con Vite y TypeScript.
+- Backend Express con JavaScript ES Modules.
+- Conexion a MySQL mediante Sequelize.
+- Autenticacion administrativa con cookie httpOnly.
+- Cambio de contrasena administrativa.
+- Categorias y documentos de Transparencia.
+- Contacto administrable.
+- Directorio administrable.
+- Organigrama administrable.
+- Mapa fijo en la pagina publica de Contacto.
+- Buscador publico, contraste y navegacion publica.
+- Tramites y servicios temporalmente desactivado desde configuracion.
+- Preparacion tecnica para produccion/cPanel.
+
+No forman parte de la version actual:
+
+- Noticias.
+- Difusion.
+- Galeria.
+- Videos.
+
+## Documentacion operativa
+
+- [Despliegue en cPanel](DESPLIEGUE_CPANEL.md)
+- [Respaldo y restauracion](RESPALDO_RESTAURACION.md)
 
 ## Tecnologias
 
 Frontend:
 
-- React
-- Vite
-- TypeScript
-- React Router
-- Axios
+- React.
+- Vite.
+- TypeScript.
+- React Router.
+- Axios.
 
 Backend:
 
-- Node.js
-- Express
-- JavaScript
-- Sequelize
-- MySQL/MariaDB
+- Node.js.
+- Express.
+- JavaScript ES Modules.
+- Sequelize.
+- MySQL/MariaDB.
+- Helmet.
+- CORS.
+- Cookies httpOnly.
+- Zod.
 
 Despliegue previsto:
 
-- cPanel
-- Setup Node.js App
-- MySQL/MariaDB de cPanel
+- cPanel.
+- Setup Node.js App.
+- MySQL/MariaDB de cPanel.
+- SSL activo.
 
 ## Estructura
 
-- `frontend/`: aplicacion publica en React con Vite y TypeScript.
-- `backend/`: API en Node.js y Express para el portal municipal.
+- `frontend/`: aplicacion publica y panel administrativo en React.
+- `backend/`: API en Node.js y Express.
+- `backend/storage/documents/`: documentos cargados desde administracion.
+- `backend/storage/organigrama/`: archivo de organigrama cargado desde administracion.
 - `sitio-html-original/`: copia de referencia del sitio HTML original.
 
-## Requisitos
+## Variables de entorno
 
-- Node.js 22 o compatible.
-- npm.
-- MySQL o MariaDB.
+Copiar los archivos de ejemplo solo en el entorno correspondiente:
 
-## Instalacion
+```powershell
+Copy-Item backend/.env.example backend/.env
+Copy-Item frontend/.env.example frontend/.env
+```
+
+Nunca subir archivos `.env` reales. Nunca colocar secretos del backend en
+variables `VITE_`.
+
+El backend valida de forma centralizada variables como:
+
+- `NODE_ENV`
+- `PORT`
+- `FRONTEND_URL`
+- `CORS_ORIGINS`
+- `DB_HOST`
+- `DB_PORT`
+- `DB_NAME`
+- `DB_USER`
+- `DB_PASSWORD`
+- `JWT_SECRET`
+- `JWT_EXPIRES_IN`
+- `COOKIE_NAME`
+- `COOKIE_SECURE`
+- `COOKIE_SAME_SITE`
+- `COOKIE_DOMAIN`
+- `TRUST_PROXY`
+- `MAX_FILE_SIZE_MB`
+
+## Desarrollo local
 
 Frontend:
 
-```cmd
+```powershell
 cd frontend
 npm install
-copy .env.example .env
 npm run dev
 ```
 
 Backend:
 
-```cmd
+```powershell
 cd backend
 npm install
-copy .env.example .env
 npm run dev
 ```
 
-`copy` corresponde a CMD de Windows. En PowerShell se puede usar:
+URLs locales habituales:
 
-```powershell
-Copy-Item .env.example .env
-```
+- Frontend: `http://localhost:5173`
+- Backend: `http://localhost:3000`
+- Health: `http://localhost:3000/api/health`
 
-## URLs locales
+## Base de datos
 
-- Frontend: http://localhost:5173
-- Backend: http://localhost:3000
-- Health: http://localhost:3000/api/health
-
-## Crear base de datos
+Ejemplo local:
 
 ```sql
 CREATE DATABASE chalma_portal
@@ -82,49 +137,62 @@ CHARACTER SET utf8mb4
 COLLATE utf8mb4_unicode_ci;
 ```
 
-## Sembrar categorias iniciales
+Para preparar una base nueva de produccion sin `force` ni `alter`:
 
 ```powershell
 cd backend
-node src/database/sembrarTransparencia.js
+node src/scripts/instalarBaseDatos.js
 ```
 
-Primero debe existir la base de datos y las credenciales deben configurarse en `backend/.env`.
+El instalador crea unicamente tablas faltantes, verifica ajustes idempotentes y
+crea configuraciones unicas cuando no existan. No crea obligaciones, categorias,
+documentos, directorio ni contenido municipal ficticio.
 
-El seed es idempotente y no crea documentos oficiales ficticios.
+## Administrador inicial
 
-## Endpoints publicos
+Para produccion, crear el primer administrador con variables temporales:
+
+```bash
+ADMIN_NOMBRE="Administrador" \
+ADMIN_USUARIO="admin_chalma" \
+ADMIN_CONTRASENA="REEMPLAZAR_CON_CONTRASENA_SEGURA" \
+node src/scripts/crearAdministradorInicial.js
+```
+
+Despues de ejecutarlo deben eliminarse las variables `ADMIN_*` del entorno. El
+script no imprime la contrasena ni el hash.
+
+## Endpoints publicos principales
 
 - `GET /api/health`
 - `GET /api/transparencia/secciones`
 - `GET /api/transparencia/secciones/:slug`
 - `GET /api/transparencia/categorias/:slug`
 - `GET /api/transparencia/categorias/:slug/documentos`
+- `GET /api/contacto`
+- `GET /api/directorio`
+- `GET /api/organigrama`
 
-## Variables de entorno
+## Validaciones utiles
 
-Copiar `.env.example` como `.env` en cada aplicacion antes de ejecutar el proyecto.
+Backend:
 
-Nunca subir archivos `.env` reales. Nunca colocar secretos del backend en variables `VITE_`.
+```powershell
+Get-ChildItem backend/src -Recurse -Filter *.js | ForEach-Object { node --check $_.FullName }
+```
 
-Los archivos `.env.example` si deben subirse al repositorio.
+Frontend:
 
-## Estado actual
+```powershell
+cd frontend
+npm run build
+```
 
-Actualmente existen:
+## Seguridad
 
-- portal publico;
-- navegacion;
-- buscador;
-- alto contraste;
-- explorador visual de transparencia;
-- modelos y API publica;
-- seed inicial.
-
-Pendiente:
-
-- autenticacion administrativa;
-- gestion de categorias;
-- carga de documentos;
-- conexion del frontend con la API;
-- despliegue en cPanel.
+- Las cookies administrativas usan `httpOnly`.
+- En produccion `COOKIE_SECURE` debe ser `true`.
+- CORS acepta solo origenes configurados.
+- Helmet mantiene CSP y permite iframes de Google Maps desde dominios definidos.
+- El health check no expone credenciales ni rutas fisicas.
+- Las carpetas de storage ignoran archivos cargados y solo rastrean `.gitkeep`.

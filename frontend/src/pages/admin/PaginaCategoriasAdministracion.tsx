@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ConfirmacionEstadoCategoria } from '../../components/admin/ConfirmacionEstadoCategoria'
 import { ModalCategoriaAdministracion } from '../../components/admin/ModalCategoriaAdministracion'
 import { TablaCategoriasAdministracion } from '../../components/admin/TablaCategoriasAdministracion'
-import { usarAutenticacion } from '../../context/ContextoAutenticacion'
+import { useAutenticacion } from '../../context/useAutenticacion'
 import { usePageTitle } from '../../hooks/usePageTitle'
 import { esErrorNoAutorizado } from '../../services/api'
 import {
@@ -33,7 +33,7 @@ const filtrosIniciales: FiltrosCategoriasAdministracion = {
 
 export function PaginaCategoriasAdministracion() {
   const navegar = useNavigate()
-  const { cerrarSesion } = usarAutenticacion()
+  const { cerrarSesion } = useAutenticacion()
   const [categorias, establecerCategorias] = useState<
     CategoriaAdministracion[]
   >([])
@@ -58,10 +58,10 @@ export function PaginaCategoriasAdministracion() {
 
   usePageTitle('Categorias y fracciones')
 
-  const manejarSesionExpirada = async () => {
+  const manejarSesionExpirada = useCallback(async () => {
     await cerrarSesion()
     navegar('/admin/login', { replace: true })
-  }
+  }, [cerrarSesion, navegar])
 
   const cargarCatalogoCategorias = async () => {
     const respuesta = await listarCategoriasAdministracion({
@@ -131,7 +131,7 @@ export function PaginaCategoriasAdministracion() {
     return () => {
       estaMontado = false
     }
-  }, [filtrosAplicados])
+  }, [filtrosAplicados, manejarSesionExpirada])
 
   const buscarCategorias = (evento: FormEvent<HTMLFormElement>) => {
     evento.preventDefault()

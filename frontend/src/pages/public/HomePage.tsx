@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { IconoPortal } from '../../components/common/IconoPortal'
 import { IconoTransparencia } from '../../components/transparencia/IconoTransparencia'
 import { configuracionPortal } from '../../config/configuracionPortal'
-import { usarContacto } from '../../context/ContextoContacto'
+import { useContacto } from '../../context/useContacto'
 import { quickAccess, transparencyShortcuts } from '../../data/navigation'
 import { usePageTitle } from '../../hooks/usePageTitle'
 
@@ -11,7 +11,7 @@ function construirEnlaceTelefono(telefono: string) {
 }
 
 export function HomePage() {
-  const { configuracion, estaCargando, mensajeError } = usarContacto()
+  const { configuracion, estaCargando, mensajeError } = useContacto()
   usePageTitle('Inicio')
 
   const telefonoVisible =
@@ -63,8 +63,8 @@ export function HomePage() {
             <p className="eyebrow">Accesos rapidos</p>
             <h2>Informacion para la ciudadania</h2>
             <p>
-              Estos bloques ya estan preparados para que despues coloquemos el
-              contenido real.
+              Consulta los principales servicios e informacion publica del
+              Ayuntamiento.
             </p>
           </div>
           <div className="quick-grid">
@@ -73,6 +73,9 @@ export function HomePage() {
                 <IconoPortal tipo={item.icon} className="quick-icon" />
                 <h3>{item.title}</h3>
                 <p>{item.description}</p>
+                <span className="quick-card__arrow" aria-hidden="true">
+                  <IconoPortal tipo="flecha" />
+                </span>
               </Link>
             ))}
           </div>
@@ -137,6 +140,9 @@ export function HomePage() {
                   La informaci&oacute;n de contacto no est&aacute; disponible
                   temporalmente.
                 </small>
+                <Link className="contact-list__link" to="/contacto">
+                  Consultar pagina de contacto
+                </Link>
               </div>
             ) : null}
 

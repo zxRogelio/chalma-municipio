@@ -139,7 +139,7 @@ async function crearFraccionesComunes(seccionObligacionesComunes) {
 
 export async function sembrarCategorias() {
   await baseDatos.authenticate();
-  await baseDatos.sync({ alter: true });
+  await baseDatos.sync();
 
   const seccionObligacionesComunes =
     await crearSeccionObligacionesComunes();
@@ -155,7 +155,10 @@ try {
   await sembrarCategorias();
   console.log("Categorias de transparencia sembradas correctamente.");
 } catch (error) {
-  console.error("No se pudieron sembrar las categorias.", error);
+  console.error(
+    "No se pudieron sembrar las categorias:",
+    error instanceof Error ? error.message : "Error desconocido"
+  );
   process.exitCode = 1;
 } finally {
   await cerrarConexion();

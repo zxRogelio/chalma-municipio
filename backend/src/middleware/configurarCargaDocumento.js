@@ -1,15 +1,8 @@
 import multer from "multer";
-
-const tamanoMaximoPredeterminadoMb = 20;
+import { configuracionEntorno } from "../config/configuracionEntorno.js";
 
 export function obtenerTamanoMaximoArchivoBytes() {
-  const valorConfigurado = Number(process.env.MAX_FILE_SIZE_MB);
-  const tamanoMb =
-    Number.isFinite(valorConfigurado) && valorConfigurado > 0
-      ? valorConfigurado
-      : tamanoMaximoPredeterminadoMb;
-
-  return tamanoMb * 1024 * 1024;
+  return configuracionEntorno.maxFileSizeMb * 1024 * 1024;
 }
 
 const cargaDocumento = multer({

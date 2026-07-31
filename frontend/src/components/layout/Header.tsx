@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import {
   governmentHeaderNavigation,
@@ -22,6 +22,7 @@ interface HeaderProps {
 }
 
 const LOGO_HEADER = '/assets/img/logo_header.png'
+const CLAVE_CONTRASTE = 'chalma-high-contrast'
 const enlacesExternosTransparencia = transparencyNavigation.filter(
   (item) => item.external,
 )
@@ -36,6 +37,14 @@ const iconosPorTipoSeccion: Record<string, IconoTransparenciaTipo> = {
   licitaciones: 'licitaciones',
 }
 
+function obtenerContrasteInicial(): boolean {
+  if (typeof window === 'undefined') {
+    return false
+  }
+
+  return window.localStorage.getItem(CLAVE_CONTRASTE) === 'true'
+}
+
 export function Header({
   onSearchOpen,
   onContrastChange,
@@ -46,11 +55,17 @@ export function Header({
   const [openDropdown, setOpenDropdown] =
     useState<NavGroupKey | null>(null)
   const [isScrolled, setIsScrolled] = useState(false)
-  const [isHighContrast, setIsHighContrast] = useState(false)
+  const [isHighContrast, setIsHighContrast] = useState<boolean>(
+    obtenerContrasteInicial,
+  )
   const [itemsTransparencia, setItemsTransparencia] =
     useState<NavItem[]>(enlacesExternosTransparencia)
 
   const isHome = location.pathname === '/'
+  const cerrarNavegacion = useCallback(() => {
+    setIsMenuOpen(false)
+    setOpenDropdown(null)
+  }, [])
 
   useEffect(() => {
     let estaMontado = true
@@ -83,16 +98,18 @@ export function Header({
   }, [])
 
   useEffect(() => {
-    const storedValue =
-      localStorage.getItem('chalma-high-contrast') === 'true'
-
-    setIsHighContrast(storedValue)
+    window.localStorage.setItem(
+      CLAVE_CONTRASTE,
+      String(isHighContrast),
+    )
 
     document.body.classList.toggle(
       'high-contrast',
-      storedValue,
+      isHighContrast,
     )
-  }, [])
+
+    onContrastChange(isHighContrast)
+  }, [isHighContrast, onContrastChange])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -111,11 +128,6 @@ export function Header({
   }, [])
 
   useEffect(() => {
-    setIsMenuOpen(false)
-    setOpenDropdown(null)
-  }, [location.pathname])
-
-  useEffect(() => {
     document.body.classList.toggle(
       'menu-open',
       isMenuOpen,
@@ -129,8 +141,7 @@ export function Header({
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        setIsMenuOpen(false)
-        setOpenDropdown(null)
+        cerrarNavegacion()
       }
     }
 
@@ -139,29 +150,10 @@ export function Header({
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [])
-
-  const closeNavigation = () => {
-    setIsMenuOpen(false)
-    setOpenDropdown(null)
-  }
+  }, [cerrarNavegacion])
 
   const toggleContrast = () => {
-    const nextValue = !isHighContrast
-
-    setIsHighContrast(nextValue)
-
-    localStorage.setItem(
-      'chalma-high-contrast',
-      String(nextValue),
-    )
-
-    document.body.classList.toggle(
-      'high-contrast',
-      nextValue,
-    )
-
-    onContrastChange(nextValue)
+    setIsHighContrast((current) => !current)
   }
 
   const renderDropdown = (
@@ -214,7 +206,7 @@ export function Header({
                 key={item.label}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={closeNavigation}
+                onClick={cerrarNavegacion}
               >
                 {key === 'transparency' ? (
                   <IconoTransparencia
@@ -235,7 +227,7 @@ export function Header({
                 className="dropdown-link"
                 key={item.to}
                 to={item.to}
-                onClick={closeNavigation}
+                onClick={cerrarNavegacion}
               >
                 {key === 'transparency' ? (
                   <IconoTransparencia
@@ -271,7 +263,7 @@ export function Header({
           className="brand"
           to="/"
           aria-label="Ir al inicio"
-          onClick={closeNavigation}
+          onClick={cerrarNavegacion}
         >
           <img
             className="brand-logo"
@@ -291,9 +283,14 @@ export function Header({
               : 'Abrir menú'
           }
           aria-expanded={isMenuOpen}
-          onClick={() =>
-            setIsMenuOpen((current) => !current)
-          }
+          onClick={() => {
+            if (isMenuOpen) {
+              cerrarNavegacion()
+              return
+            }
+
+            setIsMenuOpen(true)
+          }}
         >
           <IconoPortal
             tipo={isMenuOpen ? 'cerrar' : 'menu'}
@@ -313,7 +310,7 @@ export function Header({
                 className="nav-link"
                 to="/"
                 end
-                onClick={closeNavigation}
+                onClick={cerrarNavegacion}
               >
                 <IconoPortal tipo="inicio" className="nav-link-icon" />
                 <span>Inicio</span>
@@ -338,7 +335,7 @@ export function Header({
                 <NavLink
                   className="nav-link"
                   to="/tramites-servicios"
-                  onClick={closeNavigation}
+                  onClick={cerrarNavegacion}
                 >
                   <IconoPortal tipo="tramites" className="nav-link-icon" />
                   Trámites y servicios
@@ -350,7 +347,7 @@ export function Header({
               <NavLink
                 className="nav-link"
                 to="/contacto"
-                onClick={closeNavigation}
+                onClick={cerrarNavegacion}
               >
                 <IconoPortal tipo="contacto" className="nav-link-icon" />
                 Contacto
@@ -378,7 +375,7 @@ export function Header({
                 aria-label="Abrir buscador"
                 title="Buscar"
                 onClick={() => {
-                  closeNavigation()
+                  cerrarNavegacion()
                   onSearchOpen()
                 }}
               >

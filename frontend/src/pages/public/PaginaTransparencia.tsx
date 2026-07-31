@@ -22,14 +22,12 @@ export function PaginaTransparencia() {
   useEffect(() => {
     const controlador = new AbortController()
 
-    establecerEstaCargando(true)
-    establecerMensajeError('')
-
     obtenerSeccionesTransparencia({
       signal: controlador.signal,
     })
       .then((datos) => {
         establecerCategorias(datos)
+        establecerMensajeError('')
       })
       .catch((error: unknown) => {
         if (solicitudFueCancelada(error)) {
@@ -83,7 +81,11 @@ export function PaginaTransparencia() {
               <button
                 className="button button--primary"
                 type="button"
-                onClick={() => establecerIntento((valor) => valor + 1)}
+                onClick={() => {
+                  establecerEstaCargando(true)
+                  establecerMensajeError('')
+                  establecerIntento((valor) => valor + 1)
+                }}
               >
                 <IconoPortal tipo="reintentar" className="button-icon" />
                 Reintentar

@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
+import rateLimit from "express-rate-limit";
 import rutasContactoAdministracion from "./routes/rutasContactoAdministracion.js";
 import rutasContactoPublico from "./routes/rutasContactoPublico.js";
 import rutasDirectorioPublico from "./routes/rutasDirectorioPublico.js";
@@ -10,21 +11,49 @@ import rutasTransparenciaPublica from "./routes/rutasTransparenciaPublica.js";
 import rutasAutenticacion from "./routes/rutasAutenticacion.js";
 import rutasAdministracion from "./routes/rutasAdministracion.js";
 import { requerirAdministrador } from "./middleware/requerirAdministrador.js";
+import { configuracionEntorno } from "./config/configuracionEntorno.js";
 import { comprobarConexionBaseDatos } from "./config/baseDatos.js";
 
 const app = express();
 
-const urlFrontend = process.env.FRONTEND_URL || "http://localhost:5173";
+const origenesCorsPermitidos = new Set(
+  configuracionEntorno.corsOrigenesPermitidos
+);
+
+function validarOrigenCors(origen, callback) {
+  if (!origen) {
+    callback(null, true);
+    return;
+  }
+
+  if (origenesCorsPermitidos.has(origen)) {
+    callback(null, true);
+    return;
+  }
+
+  callback(new Error("Origen no permitido por CORS"));
+}
+
+if (configuracionEntorno.trustProxy) {
+  app.set("trust proxy", 1);
+}
 
 app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
+        "default-src": ["'self'"],
+        "base-uri": ["'self'"],
+        "object-src": ["'none'"],
+        "script-src": ["'self'"],
+        "style-src": ["'self'"],
+        "img-src": ["'self'", "data:"],
         "frame-src": [
           "'self'",
           "https://www.google.com",
           "https://maps.google.com",
         ],
+        "frame-ancestors": ["'self'"],
       },
     },
   })
@@ -32,14 +61,29 @@ app.use(
 
 app.use(
   cors({
-    origin: urlFrontend,
+    origin: validarOrigenCors,
     credentials: true,
   })
 );
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+const limitarApiGeneral = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 500,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skip: (solicitud) =>
+    solicitud.method === "GET" && solicitud.path.includes("/archivo"),
+  handler: (_solicitud, respuesta) =>
+    respuesta.status(429).json({
+      exito: false,
+      mensaje: "Demasiadas solicitudes. Intenta nuevamente mas tarde.",
+    }),
+});
+
+app.use(express.json({ limit: "1mb" }));
+app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 app.use(cookieParser());
+app.use("/api", limitarApiGeneral);
 
 app.get("/", (_solicitud, respuesta) => {
   respuesta.json({
@@ -51,7 +95,7 @@ app.get("/api/health", async (_solicitud, respuesta) => {
   const baseDatosConectada = await comprobarConexionBaseDatos();
 
   respuesta.status(baseDatosConectada ? 200 : 503).json({
-    estado: baseDatosConectada ? "ok" : "degradado",
+    estado: baseDatosConectada ? "ok" : "error",
     servicio: "chalma-api",
     baseDatos: baseDatosConectada ? "conectada" : "desconectada",
     fecha: new Date().toISOString(),
@@ -90,7 +134,10 @@ app.use((solicitud, respuesta) => {
 });
 
 app.use((error, solicitud, respuesta, _siguiente) => {
-  console.error(error);
+  console.error(
+    "Error no controlado:",
+    error instanceof Error ? error.message : "Error desconocido"
+  );
 
   if (solicitud.originalUrl.startsWith("/api/transparencia")) {
     respuesta.status(error.status || 500).json({
@@ -103,7 +150,7 @@ app.use((error, solicitud, respuesta, _siguiente) => {
   respuesta.status(error.status || 500).json({
     error: "Error interno del servidor",
     message:
-      process.env.NODE_ENV === "development"
+      configuracionEntorno.nodeEnv === "development"
         ? error.message
         : undefined,
   });

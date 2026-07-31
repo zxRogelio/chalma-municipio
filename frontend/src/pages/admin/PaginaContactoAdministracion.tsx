@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { usarAutenticacion } from '../../context/ContextoAutenticacion'
+import { useAutenticacion } from '../../context/useAutenticacion'
 import { usePageTitle } from '../../hooks/usePageTitle'
 import { esErrorNoAutorizado, obtenerMensajeErrorApi } from '../../services/api'
 import {
@@ -11,7 +11,7 @@ import {
 
 export function PaginaContactoAdministracion() {
   const navegar = useNavigate()
-  const { cerrarSesion } = usarAutenticacion()
+  const { cerrarSesion } = useAutenticacion()
   const [telefono, establecerTelefono] = useState('')
   const [correo, establecerCorreo] = useState('')
   const [mostrarTelefono, establecerMostrarTelefono] = useState(false)
@@ -25,16 +25,12 @@ export function PaginaContactoAdministracion() {
 
   usePageTitle('Configuracion de contacto')
 
-  const manejarSesionExpirada = async () => {
+  const manejarSesionExpirada = useCallback(async () => {
     await cerrarSesion()
     navegar('/admin/login', { replace: true })
-  }
+  }, [cerrarSesion, navegar])
 
-  const cargarConfiguracion = async () => {
-    establecerEstaCargando(true)
-    establecerMensajeErrorCarga('')
-    establecerMensajeErrorFormulario('')
-
+  const cargarConfiguracion = useCallback(async () => {
     try {
       const datos = await obtenerConfiguracionContactoAdministracion()
 
@@ -42,6 +38,8 @@ export function PaginaContactoAdministracion() {
       establecerCorreo(datos.correo ?? '')
       establecerMostrarTelefono(datos.mostrarTelefono)
       establecerMostrarCorreo(datos.mostrarCorreo)
+      establecerMensajeErrorCarga('')
+      establecerMensajeErrorFormulario('')
     } catch (error) {
       if (esErrorNoAutorizado(error)) {
         await manejarSesionExpirada()
@@ -54,11 +52,46 @@ export function PaginaContactoAdministracion() {
     } finally {
       establecerEstaCargando(false)
     }
-  }
+  }, [manejarSesionExpirada])
 
   useEffect(() => {
-    void cargarConfiguracion()
-  }, [])
+    let estaMontado = true
+
+    obtenerConfiguracionContactoAdministracion()
+      .then((datos) => {
+        if (!estaMontado) {
+          return
+        }
+
+        establecerTelefono(datos.telefono ?? '')
+        establecerCorreo(datos.correo ?? '')
+        establecerMostrarTelefono(datos.mostrarTelefono)
+        establecerMostrarCorreo(datos.mostrarCorreo)
+        establecerMensajeErrorCarga('')
+        establecerMensajeErrorFormulario('')
+      })
+      .catch(async (error: unknown) => {
+        if (esErrorNoAutorizado(error)) {
+          await manejarSesionExpirada()
+          return
+        }
+
+        if (estaMontado) {
+          establecerMensajeErrorCarga(
+            'No fue posible cargar la configuracion de contacto.',
+          )
+        }
+      })
+      .finally(() => {
+        if (estaMontado) {
+          establecerEstaCargando(false)
+        }
+      })
+
+    return () => {
+      estaMontado = false
+    }
+  }, [manejarSesionExpirada])
 
   const guardarConfiguracion = async (
     evento: FormEvent<HTMLFormElement>,
@@ -145,7 +178,12 @@ export function PaginaContactoAdministracion() {
           <button
             className="button button--primary"
             type="button"
-            onClick={() => void cargarConfiguracion()}
+            onClick={() => {
+              establecerEstaCargando(true)
+              establecerMensajeErrorCarga('')
+              establecerMensajeErrorFormulario('')
+              void cargarConfiguracion()
+            }}
           >
             Reintentar
           </button>

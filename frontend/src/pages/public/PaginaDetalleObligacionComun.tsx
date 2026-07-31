@@ -31,21 +31,16 @@ export function PaginaDetalleObligacionComun() {
     const controlador = new AbortController()
 
     if (!slug) {
-      establecerCategoria(null)
-      establecerCategoriaNoEncontrada(true)
-      establecerEstaCargando(false)
       return () => controlador.abort()
     }
-
-    establecerEstaCargando(true)
-    establecerMensajeError('')
-    establecerCategoriaNoEncontrada(false)
 
     obtenerCategoriaPorSlug(slug, {
       signal: controlador.signal,
     })
       .then((datos) => {
         establecerCategoria(datos)
+        establecerMensajeError('')
+        establecerCategoriaNoEncontrada(false)
       })
       .catch((error: unknown) => {
         if (solicitudFueCancelada(error)) {
@@ -72,6 +67,44 @@ export function PaginaDetalleObligacionComun() {
 
     return () => controlador.abort()
   }, [slug, intento])
+
+  if (!slug) {
+    return (
+      <main className="internal-main">
+        <InternalHero
+          eyebrow="Transparencia"
+          title="Categoria no encontrada"
+          description="La fraccion solicitada no existe en el explorador de obligaciones comunes."
+          breadcrumbs={[
+            { label: 'Transparencia', to: '/transparencia' },
+            {
+              label: 'Obligaciones Comunes (LGTAIP)',
+              to: '/transparencia/obligaciones-comunes',
+            },
+            { label: 'Categoria no encontrada' },
+          ]}
+        />
+        <section className="section">
+          <div className="container">
+            <div className="transparency-empty-state">
+              <h2>No se encontro la categoria</h2>
+              <p>
+                Revisa la ruta o vuelve al explorador de obligaciones comunes
+                para seleccionar una fraccion disponible.
+              </p>
+              <Link
+                className="button button--primary"
+                to="/transparencia/obligaciones-comunes"
+              >
+                <IconoPortal tipo="volver" className="button-icon" />
+                Volver al explorador
+              </Link>
+            </div>
+          </div>
+        </section>
+      </main>
+    )
+  }
 
   if (estaCargando) {
     return (
@@ -122,7 +155,12 @@ export function PaginaDetalleObligacionComun() {
               <button
                 className="button button--primary"
                 type="button"
-                onClick={() => establecerIntento((valor) => valor + 1)}
+                onClick={() => {
+                  establecerEstaCargando(true)
+                  establecerMensajeError('')
+                  establecerCategoriaNoEncontrada(false)
+                  establecerIntento((valor) => valor + 1)
+                }}
               >
                 <IconoPortal tipo="reintentar" className="button-icon" />
                 Reintentar

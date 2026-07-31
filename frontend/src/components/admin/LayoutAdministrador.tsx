@@ -1,9 +1,9 @@
 import { Link, Outlet, useNavigate } from 'react-router-dom'
-import { usarAutenticacion } from '../../context/ContextoAutenticacion'
+import { useAutenticacion } from '../../context/useAutenticacion'
 import { NavegacionAdministrador } from './NavegacionAdministrador'
 
 export function LayoutAdministrador() {
-  const { administrador, cerrarSesion } = usarAutenticacion()
+  const { administrador, cerrarSesion } = useAutenticacion()
   const navegar = useNavigate()
 
   const cerrarSesionAdministrador = async () => {

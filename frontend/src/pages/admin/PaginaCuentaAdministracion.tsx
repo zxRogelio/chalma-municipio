@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import type { FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { IconoPortal } from '../../components/common/IconoPortal'
-import { usarAutenticacion } from '../../context/ContextoAutenticacion'
+import { useAutenticacion } from '../../context/useAutenticacion'
 import { usePageTitle } from '../../hooks/usePageTitle'
 import { esErrorNoAutorizado, obtenerMensajeErrorApi } from '../../services/api'
 import { cambiarContrasenaAdministracion } from '../../services/servicioCuentaAdministracion'
@@ -31,7 +31,7 @@ function contrasenaEsSegura(contrasena: string) {
 
 export function PaginaCuentaAdministracion() {
   const navegar = useNavigate()
-  const { administrador, cerrarSesion } = usarAutenticacion()
+  const { administrador, cerrarSesion } = useAutenticacion()
   const [contrasenaActual, establecerContrasenaActual] = useState('')
   const [contrasenaNueva, establecerContrasenaNueva] = useState('')
   const [confirmacionContrasena, establecerConfirmacionContrasena] =

@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { IconoPortal } from '../../components/common/IconoPortal'
-import { usarAutenticacion } from '../../context/ContextoAutenticacion'
+import { useAutenticacion } from '../../context/useAutenticacion'
 import { usePageTitle } from '../../hooks/usePageTitle'
 import { esErrorNoAutorizado, obtenerMensajeErrorApi } from '../../services/api'
 import {
@@ -30,7 +30,7 @@ function formatearTamano(tamanoBytes: number | null) {
 
 export function PaginaOrganigramaAdministracion() {
   const navegar = useNavigate()
-  const { cerrarSesion } = usarAutenticacion()
+  const { cerrarSesion } = useAutenticacion()
   const [organigrama, establecerOrganigrama] =
     useState<OrganigramaAdministracion | null>(null)
   const [titulo, establecerTitulo] = useState('')
@@ -59,17 +59,12 @@ export function PaginaOrganigramaAdministracion() {
     )}`
   }, [organigrama])
 
-  const manejarSesionExpirada = async () => {
+  const manejarSesionExpirada = useCallback(async () => {
     await cerrarSesion()
     navegar('/admin/login', { replace: true })
-  }
+  }, [cerrarSesion, navegar])
 
-  const cargarOrganigrama = async () => {
-    establecerEstaCargando(true)
-    establecerMensajeErrorCarga('')
-    establecerMensajeErrorFormulario('')
-    establecerMensajeArchivo('')
-
+  const cargarOrganigrama = useCallback(async () => {
     try {
       const datos = await obtenerOrganigramaAdministracion()
 
@@ -77,6 +72,9 @@ export function PaginaOrganigramaAdministracion() {
       establecerTitulo(datos.titulo ?? '')
       establecerDescripcion(datos.descripcion ?? '')
       establecerMostrarOrganigrama(datos.mostrarOrganigrama)
+      establecerMensajeErrorCarga('')
+      establecerMensajeErrorFormulario('')
+      establecerMensajeArchivo('')
     } catch (error) {
       if (esErrorNoAutorizado(error)) {
         await manejarSesionExpirada()
@@ -87,11 +85,47 @@ export function PaginaOrganigramaAdministracion() {
     } finally {
       establecerEstaCargando(false)
     }
-  }
+  }, [manejarSesionExpirada])
 
   useEffect(() => {
-    void cargarOrganigrama()
-  }, [])
+    let estaMontado = true
+
+    obtenerOrganigramaAdministracion()
+      .then((datos) => {
+        if (!estaMontado) {
+          return
+        }
+
+        establecerOrganigrama(datos)
+        establecerTitulo(datos.titulo ?? '')
+        establecerDescripcion(datos.descripcion ?? '')
+        establecerMostrarOrganigrama(datos.mostrarOrganigrama)
+        establecerMensajeErrorCarga('')
+        establecerMensajeErrorFormulario('')
+        establecerMensajeArchivo('')
+      })
+      .catch(async (error: unknown) => {
+        if (esErrorNoAutorizado(error)) {
+          await manejarSesionExpirada()
+          return
+        }
+
+        if (estaMontado) {
+          establecerMensajeErrorCarga(
+            'No fue posible cargar el organigrama.',
+          )
+        }
+      })
+      .finally(() => {
+        if (estaMontado) {
+          establecerEstaCargando(false)
+        }
+      })
+
+    return () => {
+      estaMontado = false
+    }
+  }, [manejarSesionExpirada])
 
   const guardarInformacion = async (evento: FormEvent<HTMLFormElement>) => {
     evento.preventDefault()
@@ -216,7 +250,13 @@ export function PaginaOrganigramaAdministracion() {
           <button
             className="button button--primary"
             type="button"
-            onClick={() => void cargarOrganigrama()}
+            onClick={() => {
+              establecerEstaCargando(true)
+              establecerMensajeErrorCarga('')
+              establecerMensajeErrorFormulario('')
+              establecerMensajeArchivo('')
+              void cargarOrganigrama()
+            }}
           >
             Reintentar
           </button>

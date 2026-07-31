@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ConfirmacionEstadoCategoria } from '../../components/admin/ConfirmacionEstadoCategoria'
 import { ModalCategoriaAdministracion } from '../../components/admin/ModalCategoriaAdministracion'
 import { TablaCategoriasAdministracion } from '../../components/admin/TablaCategoriasAdministracion'
-import { obtenerRutaPublicaCategoria } from '../../components/admin/TablaCategoriasAdministracion'
-import { usarAutenticacion } from '../../context/ContextoAutenticacion'
+import { useAutenticacion } from '../../context/useAutenticacion'
 import { usePageTitle } from '../../hooks/usePageTitle'
 import { esErrorNoAutorizado } from '../../services/api'
 import {
@@ -23,12 +22,15 @@ import {
   etiquetasTipoSeccion,
   puedeCrearSubcategorias,
 } from '../../types/categoriasAdministracion'
+import { obtenerRutaPublicaCategoria } from '../../utils/rutasCategoriasAdministracion'
 
 export function PaginaDetalleCategoriaAdministracion() {
   const { id } = useParams()
   const idCategoria = Number(id)
+  const idCategoriaValido =
+    Number.isInteger(idCategoria) && idCategoria > 0
   const navegar = useNavigate()
-  const { cerrarSesion } = usarAutenticacion()
+  const { cerrarSesion } = useAutenticacion()
   const [categoria, establecerCategoria] =
     useState<CategoriaAdministracion | null>(null)
   const [subcategorias, establecerSubcategorias] = useState<
@@ -37,7 +39,8 @@ export function PaginaDetalleCategoriaAdministracion() {
   const [catalogoCategorias, establecerCatalogoCategorias] = useState<
     CategoriaAdministracion[]
   >([])
-  const [estaCargando, establecerEstaCargando] = useState(true)
+  const [estaCargando, establecerEstaCargando] =
+    useState(idCategoriaValido)
   const [mensajeError, establecerMensajeError] = useState('')
   const [mensajeOperacion, establecerMensajeOperacion] = useState('')
   const [modalAbierto, establecerModalAbierto] = useState(false)
@@ -51,21 +54,12 @@ export function PaginaDetalleCategoriaAdministracion() {
 
   usePageTitle(categoria?.titulo ?? 'Detalle de categoria')
 
-  const manejarSesionExpirada = async () => {
+  const manejarSesionExpirada = useCallback(async () => {
     await cerrarSesion()
     navegar('/admin/login', { replace: true })
-  }
+  }, [cerrarSesion, navegar])
 
-  const cargarDatos = async () => {
-    if (!Number.isInteger(idCategoria) || idCategoria <= 0) {
-      establecerMensajeError('Categoria no encontrada.')
-      establecerEstaCargando(false)
-      return
-    }
-
-    establecerEstaCargando(true)
-    establecerMensajeError('')
-
+  const cargarDatos = useCallback(async () => {
     try {
       const [respuestaCategoria, respuestaHijas, respuestaCatalogo] =
         await Promise.all([
@@ -77,6 +71,7 @@ export function PaginaDetalleCategoriaAdministracion() {
       establecerCategoria(respuestaCategoria.datos)
       establecerSubcategorias(respuestaHijas.datos)
       establecerCatalogoCategorias(respuestaCatalogo.datos)
+      establecerMensajeError('')
     } catch (error) {
       if (esErrorNoAutorizado(error)) {
         await manejarSesionExpirada()
@@ -87,11 +82,50 @@ export function PaginaDetalleCategoriaAdministracion() {
     } finally {
       establecerEstaCargando(false)
     }
-  }
+  }, [idCategoria, manejarSesionExpirada])
 
   useEffect(() => {
-    void cargarDatos()
-  }, [idCategoria])
+    if (!idCategoriaValido) {
+      return undefined
+    }
+
+    let estaMontado = true
+
+    Promise.all([
+      obtenerCategoriaAdministracion(idCategoria),
+      listarSubcategoriasPorPadre(idCategoria),
+      listarCategoriasAdministracion({ estaActivo: 'todos' }),
+    ])
+      .then(([respuestaCategoria, respuestaHijas, respuestaCatalogo]) => {
+        if (!estaMontado) {
+          return
+        }
+
+        establecerCategoria(respuestaCategoria.datos)
+        establecerSubcategorias(respuestaHijas.datos)
+        establecerCatalogoCategorias(respuestaCatalogo.datos)
+        establecerMensajeError('')
+      })
+      .catch(async (error: unknown) => {
+        if (esErrorNoAutorizado(error)) {
+          await manejarSesionExpirada()
+          return
+        }
+
+        if (estaMontado) {
+          establecerMensajeError('No fue posible cargar la informacion.')
+        }
+      })
+      .finally(() => {
+        if (estaMontado) {
+          establecerEstaCargando(false)
+        }
+      })
+
+    return () => {
+      estaMontado = false
+    }
+  }, [idCategoria, idCategoriaValido, manejarSesionExpirada])
 
   const guardarCategoria = async (datos: DatosCategoriaAdministracion) => {
     if (!categoria) {
@@ -289,20 +323,29 @@ export function PaginaDetalleCategoriaAdministracion() {
         </div>
       ) : null}
 
-      {!estaCargando && mensajeError ? (
+      {!estaCargando && (mensajeError || !idCategoriaValido) ? (
         <div className="transparency-empty-state transparency-empty-state--error">
-          <h3>{mensajeError}</h3>
-          <button
-            className="button button--primary"
-            type="button"
-            onClick={() => void cargarDatos()}
-          >
-            Reintentar
-          </button>
+          <h3>{mensajeError || 'Categoria no encontrada.'}</h3>
+          {idCategoriaValido ? (
+            <button
+              className="button button--primary"
+              type="button"
+              onClick={() => {
+                establecerEstaCargando(true)
+                establecerMensajeError('')
+                void cargarDatos()
+              }}
+            >
+              Reintentar
+            </button>
+          ) : null}
         </div>
       ) : null}
 
-      {!estaCargando && !mensajeError && permiteSubcategorias ? (
+      {!estaCargando &&
+      !mensajeError &&
+      idCategoriaValido &&
+      permiteSubcategorias ? (
         <section className="admin-subsection">
           <div className="admin-page-heading">
             <div>

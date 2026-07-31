@@ -19,14 +19,12 @@ export function PaginaObligacionesComunes() {
   useEffect(() => {
     const controlador = new AbortController()
 
-    establecerEstaCargando(true)
-    establecerMensajeError('')
-
     obtenerSeccionPorSlug('obligaciones-comunes', {
       signal: controlador.signal,
     })
       .then((datos) => {
         establecerSeccion(datos)
+        establecerMensajeError('')
       })
       .catch((error: unknown) => {
         if (solicitudFueCancelada(error)) {
@@ -86,7 +84,11 @@ export function PaginaObligacionesComunes() {
               <button
                 className="button button--primary"
                 type="button"
-                onClick={() => establecerIntento((valor) => valor + 1)}
+                onClick={() => {
+                  establecerEstaCargando(true)
+                  establecerMensajeError('')
+                  establecerIntento((valor) => valor + 1)
+                }}
               >
                 <IconoPortal tipo="reintentar" className="button-icon" />
                 Reintentar

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import type { FormEvent } from 'react'
 import type {
   CategoriaAdministracion,
@@ -111,12 +111,8 @@ export function FormularioCategoriaAdministracion({
   const categoriaPadreIdGuardada = categoriaPadreBloqueada
     ? categoriaPadreFija?.id ?? null
     : categoriaPadreId
-
-  useEffect(() => {
-    if (categoriaPadreSeleccionada) {
-      establecerTipoSeccion(categoriaPadreSeleccionada.tipoSeccion)
-    }
-  }, [categoriaPadreSeleccionada])
+  const tipoSeccionFormulario =
+    categoriaPadreSeleccionada?.tipoSeccion ?? tipoSeccion
 
   const enviarFormulario = async (evento: FormEvent<HTMLFormElement>) => {
     evento.preventDefault()
@@ -125,7 +121,7 @@ export function FormularioCategoriaAdministracion({
       titulo: titulo.trim(),
       descripcion: descripcion.trim(),
       fundamentoLegal: fundamentoLegal.trim(),
-      tipoSeccion,
+      tipoSeccion: tipoSeccionFormulario,
       categoriaPadreId: categoriaPadreIdGuardada,
       orden,
       estaActivo,
@@ -195,7 +191,7 @@ export function FormularioCategoriaAdministracion({
         <select
           id="categoria-tipo"
           required
-          value={tipoSeccion}
+          value={tipoSeccionFormulario}
           disabled={Boolean(categoriaPadreSeleccionada)}
           onChange={(evento) =>
             establecerTipoSeccion(

@@ -69,21 +69,16 @@ export function PaginaCategoriaTransparencia({
     const controlador = new AbortController()
 
     if (!slug) {
-      establecerDatos(null)
-      establecerCategoriaNoEncontrada(true)
-      establecerEstaCargando(false)
       return () => controlador.abort()
     }
-
-    establecerEstaCargando(true)
-    establecerMensajeError('')
-    establecerCategoriaNoEncontrada(false)
 
     obtenerCategoriaPublicaPorSlug(slug, {
       signal: controlador.signal,
     })
       .then((respuesta) => {
         establecerDatos(respuesta)
+        establecerMensajeError('')
+        establecerCategoriaNoEncontrada(false)
       })
       .catch((error: unknown) => {
         if (solicitudFueCancelada(error)) {
@@ -110,6 +105,34 @@ export function PaginaCategoriaTransparencia({
 
     return () => controlador.abort()
   }, [slug, intento])
+
+  if (!slug) {
+    return (
+      <main className="internal-main">
+        <InternalHero
+          eyebrow="Transparencia"
+          title="Categoria no encontrada"
+          description="La categoria solicitada no esta disponible en el portal publico."
+          breadcrumbs={construirBreadcrumbs(null)}
+        />
+        <section className="section">
+          <div className="container">
+            <div className="transparency-empty-state">
+              <h2>No se encontro la categoria</h2>
+              <p>
+                Revisa la ruta o vuelve al listado publico de transparencia para
+                seleccionar una categoria disponible.
+              </p>
+              <Link className="button button--primary" to="/transparencia">
+                <IconoPortal tipo="volver" className="button-icon" />
+                Volver a transparencia
+              </Link>
+            </div>
+          </div>
+        </section>
+      </main>
+    )
+  }
 
   if (estaCargando) {
     return (
@@ -146,7 +169,12 @@ export function PaginaCategoriaTransparencia({
               <button
                 className="button button--primary"
                 type="button"
-                onClick={() => establecerIntento((valor) => valor + 1)}
+                onClick={() => {
+                  establecerEstaCargando(true)
+                  establecerMensajeError('')
+                  establecerCategoriaNoEncontrada(false)
+                  establecerIntento((valor) => valor + 1)
+                }}
               >
                 <IconoPortal tipo="reintentar" className="button-icon" />
                 Reintentar

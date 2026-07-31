@@ -1,6 +1,6 @@
 import { IconoPortal } from '../../components/common/IconoPortal'
 import { InternalHero } from '../../components/common/InternalHero'
-import { usarContacto } from '../../context/ContextoContacto'
+import { useContacto } from '../../context/useContacto'
 import { usePageTitle } from '../../hooks/usePageTitle'
 import type { IconoPortalTipo } from '../../types/site'
 
@@ -26,7 +26,7 @@ export function ContactPage() {
     estaCargando,
     mensajeError,
     recargarContacto,
-  } = usarContacto()
+  } = useContacto()
   usePageTitle('Contacto')
 
   const datosContacto: DatoContacto[] = []

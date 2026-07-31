@@ -25,11 +25,11 @@ export function DirectoryPage() {
   useEffect(() => {
     const controlador = new AbortController()
 
-    establecerEstaCargando(true)
-    establecerMensajeError('')
-
     obtenerDirectorioPublico({ signal: controlador.signal })
-      .then((datos) => establecerRegistros(datos))
+      .then((datos) => {
+        establecerRegistros(datos)
+        establecerMensajeError('')
+      })
       .catch((error: unknown) => {
         if (solicitudFueCancelada(error)) {
           return
@@ -81,7 +81,11 @@ export function DirectoryPage() {
               <button
                 className="button button--primary"
                 type="button"
-                onClick={() => establecerIntento((valor) => valor + 1)}
+                onClick={() => {
+                  establecerEstaCargando(true)
+                  establecerMensajeError('')
+                  establecerIntento((valor) => valor + 1)
+                }}
               >
                 <IconoPortal tipo="reintentar" className="button-icon" />
                 Reintentar

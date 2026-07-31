@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { searchPages } from '../../data/searchPages'
 import { IconoPortal } from './IconoPortal'
@@ -11,6 +11,10 @@ interface SearchOverlayProps {
 export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   const [query, setQuery] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
+  const cerrarBuscador = useCallback(() => {
+    setQuery('')
+    onClose()
+  }, [onClose])
 
   const results = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase()
@@ -37,9 +41,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     document.body.classList.toggle('search-open', isOpen)
 
     if (isOpen) {
-      window.setTimeout(() => inputRef.current?.focus(), 0)
-    } else {
-      setQuery('')
+      inputRef.current?.focus({ preventScroll: true })
     }
 
     return () => document.body.classList.remove('search-open')
@@ -52,13 +54,13 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        onClose()
+        cerrarBuscador()
       }
     }
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, onClose])
+  }, [cerrarBuscador, isOpen])
 
   return (
     <div
@@ -66,7 +68,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
       aria-hidden={!isOpen}
       onMouseDown={(event) => {
         if (event.currentTarget === event.target) {
-          onClose()
+          cerrarBuscador()
         }
       }}
     >
@@ -74,7 +76,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
         className="search-close"
         type="button"
         aria-label="Cerrar buscador"
-        onClick={onClose}
+        onClick={cerrarBuscador}
       >
         <IconoPortal tipo="cerrar" className="search-close-icon" />
       </button>
@@ -105,7 +107,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                 className="search-result"
                 key={result.path}
                 to={result.path}
-                onClick={onClose}
+                onClick={cerrarBuscador}
               >
                 <strong>{result.title}</strong>
                 <small>{result.description}</small>

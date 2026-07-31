@@ -47,15 +47,13 @@ export function PaginaDocumentosTransparencia({
   useEffect(() => {
     const controlador = new AbortController()
 
-    establecerEstaCargando(true)
-    establecerMensajeError('')
-    establecerCategoriaNoEncontrada(false)
-
     obtenerCategoriaPorSlug(slug, {
       signal: controlador.signal,
     })
       .then((datos) => {
         establecerCategoria(datos)
+        establecerMensajeError('')
+        establecerCategoriaNoEncontrada(false)
       })
       .catch((error: unknown) => {
         if (solicitudFueCancelada(error)) {
@@ -128,7 +126,12 @@ export function PaginaDocumentosTransparencia({
               <button
                 className="button button--primary"
                 type="button"
-                onClick={() => establecerIntento((valor) => valor + 1)}
+                onClick={() => {
+                  establecerEstaCargando(true)
+                  establecerMensajeError('')
+                  establecerCategoriaNoEncontrada(false)
+                  establecerIntento((valor) => valor + 1)
+                }}
               >
                 <IconoPortal tipo="reintentar" className="button-icon" />
                 Reintentar

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { configuracionPortal } from '../../config/configuracionPortal'
-import { usarContacto } from '../../context/ContextoContacto'
+import { useContacto } from '../../context/useContacto'
 import type { IconoPortalTipo } from '../../types/site'
 import { IconoPortal } from '../common/IconoPortal'
 
@@ -24,7 +24,10 @@ function construirEnlaceTelefono(telefono: string) {
 
 export function Footer() {
   const currentYear = new Date().getFullYear()
-  const { configuracion } = usarContacto()
+  const { configuracion } = useContacto()
+  const redesSocialesVisibles = redesSocialesFooter.filter(
+    (redSocial) => redSocial.url.trim() && redSocial.url !== '#',
+  )
   const telefonoVisible =
     configuracion.mostrarTelefono && configuracion.telefono
       ? configuracion.telefono
@@ -34,38 +37,34 @@ export function Footer() {
       ? configuracion.correo
       : null
   const tieneContactoVisible = Boolean(telefonoVisible || correoVisible)
+  const claseColumnasFooter = tieneContactoVisible
+    ? 'footer-grid--with-contact'
+    : 'footer-grid--without-contact'
 
   return (
     <footer className="site-footer">
-      <div className="footer-grid container">
+      <div className={`footer-grid ${claseColumnasFooter} container`}>
         <div>
           <p className="footer-copy">
             Portal oficial del H. Ayuntamiento de Chalma, Veracruz.
           </p>
-          <div className="footer-social" aria-label="Redes sociales oficiales">
-            {redesSocialesFooter.map((redSocial) => {
-              const urlPendiente = redSocial.url === '#'
-
-              return (
+          {redesSocialesVisibles.length > 0 ? (
+            <div className="footer-social" aria-label="Redes sociales oficiales">
+              {redesSocialesVisibles.map((redSocial) => (
                 <a
                   className="footer-social-link"
                   href={redSocial.url}
                   key={redSocial.nombre}
-                  target={urlPendiente ? undefined : '_blank'}
-                  rel={urlPendiente ? undefined : 'noopener noreferrer'}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label={redSocial.nombre}
                   title={redSocial.nombre}
-                  onClick={
-                    urlPendiente
-                      ? (evento) => evento.preventDefault()
-                      : undefined
-                  }
                 >
                   <IconoPortal tipo={redSocial.tipo} />
                 </a>
-              )
-            })}
-          </div>
+              ))}
+            </div>
+          ) : null}
         </div>
         <div>
           <h2 className="footer-title">Enlaces</h2>

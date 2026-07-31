@@ -1,19 +1,17 @@
 import { Sequelize } from "sequelize";
+import { configuracionEntorno } from "./configuracionEntorno.js";
 
-const nombreBaseDatos = process.env.DB_NAME || "chalma_portal";
-const usuarioBaseDatos = process.env.DB_USER || "root";
-const contrasenaBaseDatos = process.env.DB_PASSWORD || "";
-const mostrarConsultas = process.env.DB_LOGGING === "true";
+const { baseDatos: configuracionBaseDatos } = configuracionEntorno;
 
 const baseDatos = new Sequelize(
-  nombreBaseDatos,
-  usuarioBaseDatos,
-  contrasenaBaseDatos,
+  configuracionBaseDatos.nombre,
+  configuracionBaseDatos.usuario,
+  configuracionBaseDatos.contrasena,
   {
-    host: process.env.DB_HOST || "localhost",
-    port: Number(process.env.DB_PORT) || 3306,
+    host: configuracionBaseDatos.host,
+    port: configuracionBaseDatos.puerto,
     dialect: "mysql",
-    logging: mostrarConsultas ? console.log : false,
+    logging: configuracionBaseDatos.logging ? console.log : false,
     pool: {
       max: 5,
       min: 0,
@@ -31,16 +29,28 @@ const baseDatos = new Sequelize(
   }
 );
 
-export const comprobarConexionBaseDatos = async () => {
+export const comprobarConexionBaseDatos = async ({
+  registrarError = false,
+} = {}) => {
   try {
     await baseDatos.authenticate();
     return true;
-  } catch (error) {
-    console.error(
-      "No fue posible conectar con la base de datos:",
-      error instanceof Error ? error.message : "Error desconocido"
-    );
+  } catch {
+    if (registrarError) {
+      console.error("No fue posible conectar con la base de datos.");
+    }
+
     return false;
+  }
+};
+
+export const verificarConexionBaseDatos = async () => {
+  const conectada = await comprobarConexionBaseDatos({
+    registrarError: false,
+  });
+
+  if (!conectada) {
+    throw new Error("No fue posible conectar con la base de datos.");
   }
 };
 

@@ -1,8 +1,8 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
-import { usarAutenticacion } from '../../context/ContextoAutenticacion'
+import { useAutenticacion } from '../../context/useAutenticacion'
 
 export function RutaAdministrador() {
-  const { estaAutenticado, estaCargando } = usarAutenticacion()
+  const { estaAutenticado, estaCargando } = useAutenticacion()
   const ubicacion = useLocation()
 
   if (estaCargando) {

@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { usarAutenticacion } from '../../context/ContextoAutenticacion'
+import { useAutenticacion } from '../../context/useAutenticacion'
 import { usePageTitle } from '../../hooks/usePageTitle'
 import { esErrorNoAutorizado } from '../../services/api'
 import { consultarResumenAdministracion } from '../../services/servicioAutenticacion'
 
 export function AdminDashboardPage() {
-  const { administrador, cerrarSesion } = usarAutenticacion()
+  const { administrador, cerrarSesion } = useAutenticacion()
   const navegar = useNavigate()
   const [mensajeResumen, establecerMensajeResumen] = useState(
     'Comprobando acceso administrativo.',

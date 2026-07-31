@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ConfirmacionEstadoCategoria } from '../../components/admin/ConfirmacionEstadoCategoria'
 import { ModalCategoriaAdministracion } from '../../components/admin/ModalCategoriaAdministracion'
-import { usarAutenticacion } from '../../context/ContextoAutenticacion'
+import { useAutenticacion } from '../../context/useAutenticacion'
 import { usePageTitle } from '../../hooks/usePageTitle'
 import { esErrorNoAutorizado } from '../../services/api'
 import {
@@ -20,7 +20,7 @@ import { etiquetasTipoSeccion } from '../../types/categoriasAdministracion'
 
 export function PaginaTransparenciaAdministracion() {
   const navegar = useNavigate()
-  const { cerrarSesion } = usarAutenticacion()
+  const { cerrarSesion } = useAutenticacion()
   const [secciones, establecerSecciones] = useState<CategoriaAdministracion[]>(
     [],
   )
@@ -41,15 +41,12 @@ export function PaginaTransparenciaAdministracion() {
 
   usePageTitle('Transparencia administrativa')
 
-  const manejarSesionExpirada = async () => {
+  const manejarSesionExpirada = useCallback(async () => {
     await cerrarSesion()
     navegar('/admin/login', { replace: true })
-  }
+  }, [cerrarSesion, navegar])
 
-  const cargarDatos = async () => {
-    establecerEstaCargando(true)
-    establecerMensajeError('')
-
+  const cargarDatos = useCallback(async () => {
     try {
       const [respuestaSecciones, respuestaCatalogo] = await Promise.all([
         listarSeccionesPrincipales(),
@@ -58,6 +55,7 @@ export function PaginaTransparenciaAdministracion() {
 
       establecerSecciones(respuestaSecciones.datos)
       establecerCatalogoCategorias(respuestaCatalogo.datos)
+      establecerMensajeError('')
     } catch (error) {
       if (esErrorNoAutorizado(error)) {
         await manejarSesionExpirada()
@@ -68,11 +66,44 @@ export function PaginaTransparenciaAdministracion() {
     } finally {
       establecerEstaCargando(false)
     }
-  }
+  }, [manejarSesionExpirada])
 
   useEffect(() => {
-    void cargarDatos()
-  }, [])
+    let estaMontado = true
+
+    Promise.all([
+      listarSeccionesPrincipales(),
+      listarCategoriasAdministracion({ estaActivo: 'todos' }),
+    ])
+      .then(([respuestaSecciones, respuestaCatalogo]) => {
+        if (!estaMontado) {
+          return
+        }
+
+        establecerSecciones(respuestaSecciones.datos)
+        establecerCatalogoCategorias(respuestaCatalogo.datos)
+        establecerMensajeError('')
+      })
+      .catch(async (error: unknown) => {
+        if (esErrorNoAutorizado(error)) {
+          await manejarSesionExpirada()
+          return
+        }
+
+        if (estaMontado) {
+          establecerMensajeError('No fue posible cargar la informacion.')
+        }
+      })
+      .finally(() => {
+        if (estaMontado) {
+          establecerEstaCargando(false)
+        }
+      })
+
+    return () => {
+      estaMontado = false
+    }
+  }, [manejarSesionExpirada])
 
   const guardarCategoria = async (datos: DatosCategoriaAdministracion) => {
     establecerEstaGuardando(true)
@@ -180,7 +211,11 @@ export function PaginaTransparenciaAdministracion() {
           <button
             className="button button--primary"
             type="button"
-            onClick={() => void cargarDatos()}
+            onClick={() => {
+              establecerEstaCargando(true)
+              establecerMensajeError('')
+              void cargarDatos()
+            }}
           >
             Reintentar
           </button>

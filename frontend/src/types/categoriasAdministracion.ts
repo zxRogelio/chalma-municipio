@@ -83,10 +83,11 @@ export const etiquetasTipoSeccion: Record<TipoSeccionTransparencia, string> = {
 }
 
 export function puedeCrearSubcategorias(
-  _categoria: Pick<
+  categoria: Pick<
     CategoriaAdministracion,
     'tipoSeccion' | 'categoriaPadreId'
   >,
 ) {
+  void categoria
   return true
 }

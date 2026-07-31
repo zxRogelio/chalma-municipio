@@ -1,11 +1,4 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 import { esErrorNoAutorizado } from '../services/api'
 import {
@@ -16,22 +9,9 @@ import {
 import type {
   Administrador,
   CredencialesAdministrador,
-  RespuestaAutenticacion,
 } from '../types/autenticacion'
-
-interface ValorContextoAutenticacion {
-  administrador: Administrador | null
-  estaCargando: boolean
-  estaAutenticado: boolean
-  iniciarSesion: (
-    credenciales: CredencialesAdministrador,
-  ) => Promise<RespuestaAutenticacion>
-  cerrarSesion: () => Promise<void>
-  actualizarSesion: () => Promise<void>
-}
-
-export const ContextoAutenticacion =
-  createContext<ValorContextoAutenticacion | undefined>(undefined)
+import { ContextoAutenticacion } from './contextoAutenticacion'
+import type { ValorContextoAutenticacion } from './contextoAutenticacion'
 
 interface PropiedadesProveedorAutenticacion {
   children: ReactNode
@@ -64,14 +44,13 @@ export function ProveedorAutenticacion({
   useEffect(() => {
     let estaMontado = true
 
-    async function cargarSesionInicial() {
-      try {
-        const respuesta = await consultarSesion()
-
+    consultarSesion()
+      .then((respuesta) => {
         if (estaMontado) {
           establecerAdministrador(respuesta.datos?.administrador ?? null)
         }
-      } catch (error) {
+      })
+      .catch((error: unknown) => {
         if (!esErrorNoAutorizado(error)) {
           console.error('No fue posible consultar la sesion administrativa.')
         }
@@ -79,14 +58,12 @@ export function ProveedorAutenticacion({
         if (estaMontado) {
           establecerAdministrador(null)
         }
-      } finally {
+      })
+      .finally(() => {
         if (estaMontado) {
           establecerEstaCargando(false)
         }
-      }
-    }
-
-    void cargarSesionInicial()
+      })
 
     return () => {
       estaMontado = false
@@ -135,16 +112,4 @@ export function ProveedorAutenticacion({
       {children}
     </ContextoAutenticacion.Provider>
   )
-}
-
-export function usarAutenticacion() {
-  const contexto = useContext(ContextoAutenticacion)
-
-  if (!contexto) {
-    throw new Error(
-      'usarAutenticacion debe utilizarse dentro de ProveedorAutenticacion.',
-    )
-  }
-
-  return contexto
 }

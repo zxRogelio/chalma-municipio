@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { usarAutenticacion } from '../../context/ContextoAutenticacion'
+import { useAutenticacion } from '../../context/useAutenticacion'
 import { usePageTitle } from '../../hooks/usePageTitle'
 import { esErrorNoAutorizado, obtenerMensajeErrorApi } from '../../services/api'
 import {
@@ -59,7 +59,7 @@ function obtenerFormularioDesdeRegistro(
 
 export function PaginaDirectorioAdministracion() {
   const navegar = useNavigate()
-  const { cerrarSesion } = usarAutenticacion()
+  const { cerrarSesion } = useAutenticacion()
   const [registros, establecerRegistros] = useState<
     RegistroDirectorioAdministracion[]
   >([])
@@ -77,18 +77,16 @@ export function PaginaDirectorioAdministracion() {
 
   usePageTitle('Directorio municipal')
 
-  const manejarSesionExpirada = async () => {
+  const manejarSesionExpirada = useCallback(async () => {
     await cerrarSesion()
     navegar('/admin/login', { replace: true })
-  }
+  }, [cerrarSesion, navegar])
 
-  const cargarRegistros = async () => {
-    establecerEstaCargando(true)
-    establecerMensajeError('')
-
+  const cargarRegistros = useCallback(async () => {
     try {
       const respuesta = await listarDirectorioAdministracion()
       establecerRegistros(respuesta.datos)
+      establecerMensajeError('')
     } catch (error) {
       if (esErrorNoAutorizado(error)) {
         await manejarSesionExpirada()
@@ -99,11 +97,42 @@ export function PaginaDirectorioAdministracion() {
     } finally {
       establecerEstaCargando(false)
     }
-  }
+  }, [manejarSesionExpirada])
 
   useEffect(() => {
-    void cargarRegistros()
-  }, [])
+    let estaMontado = true
+
+    listarDirectorioAdministracion()
+      .then((respuesta) => {
+        if (!estaMontado) {
+          return
+        }
+
+        establecerRegistros(respuesta.datos)
+        establecerMensajeError('')
+      })
+      .catch(async (error: unknown) => {
+        if (esErrorNoAutorizado(error)) {
+          await manejarSesionExpirada()
+          return
+        }
+
+        if (estaMontado) {
+          establecerMensajeError(
+            'No fue posible cargar el directorio municipal.',
+          )
+        }
+      })
+      .finally(() => {
+        if (estaMontado) {
+          establecerEstaCargando(false)
+        }
+      })
+
+    return () => {
+      estaMontado = false
+    }
+  }, [manejarSesionExpirada])
 
   const registrosFiltrados = useMemo(() => {
     const texto = busqueda.trim().toLowerCase()
@@ -283,7 +312,11 @@ export function PaginaDirectorioAdministracion() {
           <button
             className="button button--primary"
             type="button"
-            onClick={() => void cargarRegistros()}
+            onClick={() => {
+              establecerEstaCargando(true)
+              establecerMensajeError('')
+              void cargarRegistros()
+            }}
           >
             Reintentar
           </button>
